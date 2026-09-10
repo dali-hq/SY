@@ -62,29 +62,31 @@
             margin: 0 auto; 
         }
 
-/* 讓照片維持統一的比例與大小（例如 3:4 比例，可自行調整） */
-        .emp-card img { 
+/* 容器：強化水平置中 */
+        .result-container { 
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+            align-items: stretch; /* 讓同一列的卡片高度自動對齊 */
+            gap: 10px; 
+            padding: 10px 0; 
             width: 100%; 
-            height: auto; 
-            aspect-ratio: 3 / 4; /* 強制所有照片為固定比例 */
-            object-fit: cover;   /* 圖片裁切填滿，不變形 */
-            border-radius: 6px; 
-            border: 1px solid #eee; 
+            margin: 0 auto; 
         }
 
-        /* 確保卡片本身排版整齊對齊 */
+        /* 員工卡片樣式 */
         .emp-card { 
             background: #fff; 
             border: 1px solid #333; 
             border-radius: 8px; 
-            padding: 10px; 
+            padding: 8px; 
             box-shadow: 0 3px 8px rgba(0,0,0,0.08); 
             box-sizing: border-box; 
             text-align: center; 
             width: calc((100% - 15px) / 2); 
             display: flex;
             flex-direction: column;
-            justify-content: space-between; /* 讓內容上下撐開對齊 */
+            justify-content: space-between; /* 上下內容平均分配，確保高度一致 */
             transition: transform 0.2s;
         }
         .emp-card:hover { transform: translateY(-2px); }
@@ -92,14 +94,25 @@
         /* 姓名與編號移至上方（字體放大） */
         .emp-card .emp-name-tag { 
             font-weight: bold; 
-            font-size: 17px; /* 放大字體 */
-            margin-bottom: 8px; /* 改為下方留白 */
+            font-size: 17px; 
+            margin-bottom: 6px; 
             color: #2c3e50; 
             border-bottom: 2px solid #f0f0f0; 
-            padding-bottom: 6px; 
+            padding-bottom: 4px; 
             overflow: hidden; 
             text-overflow: ellipsis; 
             white-space: nowrap; 
+        }
+
+        /* 照片樣式：固定比例與大小 */
+        .emp-card img { 
+            width: 100%; 
+            height: auto; 
+            aspect-ratio: 3 / 4; 
+            object-fit: cover; 
+            border-radius: 6px; 
+            border: 1px solid #eee; 
+            flex-grow: 1;
         }
 
         .emp-card .emp-site-tag { font-size: 13px; color: #e67e22; margin-top: 6px; font-weight: bold; }
@@ -109,17 +122,17 @@
             .result-container { 
                 display: grid !important; 
                 justify-content: center; 
-                grid-template-columns: repeat(8, 1fr) !important; /* 改為 8 個 */
-                max-width: 1350px; /* 稍微加寬容納 8 欄 */
+                grid-template-columns: repeat(8, 1fr) !important; 
+                max-width: 1350px; 
                 gap: 10px; 
                 margin: 0 auto;
             }
             .emp-card { 
-                width: 100% !important; 
+                width: 100% !important; /* 在 Grid 佈局下吃滿 1/8 欄位 */
                 padding: 6px; 
             }
             .emp-card .emp-name-tag {
-                font-size: 16px; /* 保持電腦版清晰的放大字體 */
+                font-size: 15px; /* 8個一列時稍微調整字體大小避免擠壓 */
             }
         }
 
