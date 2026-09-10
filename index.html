@@ -3,75 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="referrer" content="no-referrer">
     <link rel="icon" href="logo.png" type="image/png">
     <title>實毅營造員工</title>
     <script src="data.js"></script>
     <script src="dayoff.js"></script>
-<style>
-        body { font-family: "Noto Serif TC", "Microsoft JhengHei", serif, sans-serif; text-align: center; background: #f5f7fa; padding: 15px; margin: 0; }
+    <style>
+        body {
+            font-family: "Noto Serif TC", "Microsoft JhengHei", serif, sans-serif;
+            text-align: center;
+            background: #f5f7fa;
+            padding: 15px;
+            margin: 0;
+        }
+
         /* 基礎卡片容器：在電腦版會透過 .wide 撐開 */
         .card { 
-            background: white; padding: 25px; border-radius: 12px; 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1); display: block; 
-            width: 100%; max-width: 450px; box-sizing: border-box; 
-            margin: 10px auto; transition: max-width 0.3s; 
+            background: white;
+            padding: 25px;
+            border-radius: 12px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            display: block; 
+            width: 100%;
+            max-width: 450px;
+            box-sizing: border-box; 
+            margin: 10px auto;
+            transition: max-width 0.3s; 
         }
-        /* 電腦版撐開後的寬度（配合一列 8 個加寬至 1450px 確保空間充足） */
-        .card.wide { max-width: 1450px; }
+
+        /* 電腦版撐開後的寬度 */
+        .card.wide {
+            max-width: 1450px;
+        }
 
         /* 標題 Logo 樣式 */
-        .page-title {color: #2c3e50; display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 30px; margin-top: 0; margin-bottom: 20px;  }
-        .page-title img { width: 38px; height: 38px; object-fit: contain; }
+        .page-title {
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            font-size: 30px;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+        .page-title img {
+            width: 38px;
+            height: 38px;
+            object-fit: contain;
+        }
 
         /* 搜尋區域 */
-        .search-section { max-width: 400px; margin: 0 auto; }
-        input { padding: 15px; border: 2px solid #9F0050; border-radius: 6px; font-size: 18px; outline: none; width: 100%; box-sizing: border-box; margin-bottom: 10px; }
-        .btn-group { display: flex; gap: 10px; margin-bottom: 15px; }
-        .btn-search { flex: 2; padding: 15px 0; background-color: #FF359A; color: white; border: none; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer; }
-        .btn-clear { flex: 1; padding: 15px 0; background-color: #95a5a6; color: white; border: none; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer; }
+        .search-section {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        input {
+            padding: 15px;
+            border: 2px solid #9F0050;
+            border-radius: 6px;
+            font-size: 18px;
+            outline: none;
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .btn-search {
+            flex: 2;
+            padding: 15px 0;
+            background-color: #FF359A;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn-clear {
+            flex: 1;
+            padding: 15px 0;
+            background-color: #95a5a6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+        }
     
-        
-/* 下方導覽列：純文字、加上分隔點、字體放大到 20px */
+        /* 下方導覽列 */
         .nav-link { 
             margin-top: 25px; 
             padding-top: 15px; 
             border-top: 1px solid #eee; 
-            font-size: 22px; /* 字體放大至 20px */
+            font-size: 22px;
             line-height: 2.5; 
             display: flex; 
             flex-wrap: wrap; 
             justify-content: center; 
             align-items: center;
-            gap: 12px; /* 控制文字與分隔點的間距 */
+            gap: 12px;
         }
         .nav-link a { 
-            background: none !important; /* 移除背景色 */
-            border: none !important; /* 移除邊框 */
-            padding: 0 !important; /* 移除內距 */
+            background: none !important;
+            border: none !important;
+            padding: 0 !important;
             color: #444; 
             text-decoration: none; 
             font-weight: bold; 
             cursor: pointer; 
             white-space: nowrap; 
-            font-size: 22px; /* 確保連結文字同步放大 */
+            font-size: 22px;
             transition: color 0.2s;
         }
         .nav-link a:hover {
-            color: #222; /* 滑鼠懸停時顏色微調 */
-            font-weight: bold !important; /* 懸停時變粗 */
-            text-decoration: underline; /* 懸停時帶有底線提示 */
+            color: #222;
+            font-weight: bold !important;
+            text-decoration: underline;
         }
-        /* 如果中間有加分隔符號（例如 ‧），可以用這行控制顏色 */
         .nav-link span.divider {
             color: #bbb;
-            font-weight: normal; font-size: 14px;
+            font-weight: normal;
+            font-size: 14px;
         }
-        .nav-duty { color: #2c3e50 !important; }
-        .nav-duty span { color: #27ae60 !important; }
+        .nav-duty {
+            color: #2c3e50 !important;
+        }
+        .nav-duty span {
+            color: #27ae60 !important;
+        }
     
         /* 容器：強化水平置中與高度對齊 */
         .result-container { 
@@ -100,12 +168,14 @@
             justify-content: space-between; 
             transition: transform 0.2s;
         }
-        .emp-card:hover { transform: translateY(-2px); }
+        .emp-card:hover {
+            transform: translateY(-2px);
+        }
         
-        /* 姓名與編號標籤（字體放大） */
+        /* 姓名與編號標籤 */
         .emp-card .emp-name-tag { 
             font-weight: bold; 
-            font-size: 20px; /* 手機預設放大 */
+            font-size: 20px;
             margin-bottom: 6px; 
             color: #2c3e50; 
             border-bottom: 2px solid #f0f0f0; 
@@ -115,7 +185,7 @@
             white-space: nowrap; 
         }
 
-        /* 照片樣式：固定比例與大小 */
+        /* 照片樣式 */
         .emp-card img { 
             width: 100%; 
             height: auto; 
@@ -126,14 +196,19 @@
             flex-grow: 1;
         }
 
-        .emp-card .emp-site-tag { font-size: 13px; color: #e67e22; margin-top: 6px; font-weight: bold; }
+        .emp-card .emp-site-tag {
+            font-size: 13px;
+            color: #e67e22;
+            margin-top: 6px;
+            font-weight: bold;
+        }
 
-        /* 電腦版：強制定製一行 8 個（均分等寬） */
+        /* 電腦版：強制定製一行 8 個 */
         @media (min-width: 1024px) {
             .result-container { 
                 display: grid !important; 
                 justify-content: center; 
-                grid-template-columns: repeat(8, minmax(0, 1fr)) !important; /* 鎖死絕對等寬 */
+                grid-template-columns: repeat(8, minmax(0, 1fr)) !important;
                 max-width: 100% !important; 
                 gap: 10px !important; 
                 margin: 0 auto;
@@ -143,18 +218,31 @@
                 padding: 6px; 
             }
             .emp-card .emp-name-tag {
-                font-size: 20px; /* 8個一列時字體放大至 16px，清晰好讀 */
+                font-size: 20px;
             }
         }
 
         /* 休假盒子 */
-        #off-duty-box { margin: 30px auto 0 auto; padding: 14px; background: #fff0f0; border-radius: 12px; border: 1px solid #ffcccc; text-align: left; font-size: 18px; max-width: 450px; }
+        #off-duty-box {
+            margin: 30px auto 0 auto;
+            padding: 14px;
+            background: #fff0f0;
+            border-radius: 12px;
+            border: 1px solid #ffcccc;
+            text-align: left;
+            font-size: 18px;
+            max-width: 450px;
+        }
 
         /* 手機斷行控制 */
-        @media (max-width: 600px) { .mobile-br { display: block; width: 100%; height: 0; } }
-        @media (min-width: 601px) { .mobile-br { display: none; } }
+        @media (max-width: 600px) {
+            .mobile-br { display: block; width: 100%; height: 0; }
+        }
+        @media (min-width: 601px) {
+            .mobile-br { display: none; }
+        }
 
-        /* 列印專屬樣式：強制橫向、8 欄、等寬 */
+        /* 列印專屬樣式 */
         @media print {
             @page {
                 size: landscape;
@@ -171,11 +259,9 @@
                 padding: 0 !important;
                 margin: 0 !important;
             }
-            /* 隱藏不需要列印的區塊 */
             .search-section, .btn-group, .nav-link, #off-duty-box {
                 display: none !important;
             }
-            /* 列印時強制 8 欄等寬 */
             .result-container {
                 display: grid !important;
                 grid-template-columns: repeat(8, minmax(0, 1fr)) !important;
@@ -188,7 +274,6 @@
                 break-inside: avoid;
                 page-break-inside: avoid;
             }
-            /* 關鍵：專門壓小列印時的名字字體，避免過大擠壓 */
             .emp-card .emp-name-tag {
                 font-size: 13px !important; 
                 margin-bottom: 3px !important;
@@ -199,17 +284,19 @@
                 margin-top: 3px !important;
             }
         }
-    .site-group {
-    margin-bottom: 8px;
-}
-.site-title {
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 2px;
-}
-.date-range {
-    color: #333;
-    }
+
+        /* 休假分組與起訖日期樣式 */
+        .site-group {
+            margin-bottom: 8px;
+        }
+        .site-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 2px;
+        }
+        .date-range {
+            color: #333;
+        }
     </style>
 </head>
 <body>
@@ -270,7 +357,6 @@
             card.classList.add('wide');
             renderCards('result-overview', WORKER_DATA);
         } else {
-            // 切換回查詢頁面時，若有搜尋結果才維持 wide，否則變回窄版
             const hasResults = document.getElementById('result-display').innerHTML.trim() !== '';
             if (hasResults && window.innerWidth >= 1024) {
                 card.classList.add('wide');
@@ -280,7 +366,7 @@
         }
     }
 
-// 渲染員工卡片
+    // 渲染員工卡片
     function renderCards(targetId, list) {
         const div = document.getElementById(targetId);
         if (!div) return;
@@ -331,56 +417,56 @@
     }
 
     // 今日休假查詢（依工地分組）
-function loadOffDuty() {
-    const offListEl = document.getElementById('off-list');
-    if (!offListEl) return;
-    
-    if (typeof DAYOFF === 'undefined') {
-        offListEl.innerHTML = "今日無人休假";
-        return;
-    }
-    
-    // 取得今天的「民國年」日期格式 (例如: 115/09/10)
-    const now = new Date();
-    const minguoYear = now.getFullYear() - 1911;
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    const today = `${minguoYear}/${month}/${day}`;
-    
-    // 篩選出今天在休假區間內的名單
-    const list = DAYOFF.filter(d => today >= d.start && today <= d.end);
-    
-    if (list.length === 0) {
-        offListEl.innerHTML = "今日無人休假";
-        return;
-    }
-    
-    // 💡 依照工地進行分組 (Group by site)
-    const grouped = list.reduce((acc, item) => {
-        const site = item.site || '其他工地';
-        if (!acc[site]) {
-            acc[site] = [];
+    function loadOffDuty() {
+        const offListEl = document.getElementById('off-list');
+        if (!offListEl) return;
+        
+        if (typeof DAYOFF === 'undefined') {
+            offListEl.innerHTML = "今日無人休假";
+            return;
         }
-        acc[site].push(item);
-        return acc;
-    }, {});
-    
-    // 組合 HTML 畫面（每個工地一個群組）
-    let html = '';
-    for (const site in grouped) {
-        html += `<div class="site-group">`;
-        html += `<div class="site-title">📍 ${site}</div>`; // 工地標題
         
-        const workersHtml = grouped[site].map(e => {
-            return `&nbsp;&nbsp;• ${e.id} ${e.name} <span class="date-range">(${e.start.slice(5)}~${e.end.slice(5)})</span>`;
-        }).join('<br>');
+        // 取得今天的「民國年」日期格式 (例如: 115/09/10)
+        const now = new Date();
+        const minguoYear = now.getFullYear() - 1911;
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const today = `${minguoYear}/${month}/${day}`;
         
-        html += workersHtml;
-        html += `</div><br>`; // 每個工地間隔一行
+        // 篩選出今天在休假區間內的名單
+        const list = DAYOFF.filter(d => today >= d.start && today <= d.end);
+        
+        if (list.length === 0) {
+            offListEl.innerHTML = "今日無人休假";
+            return;
+        }
+        
+        // 依照工地進行分組 (Group by site)
+        const grouped = list.reduce((acc, item) => {
+            const site = item.site || '其他工地';
+            if (!acc[site]) {
+                acc[site] = [];
+            }
+            acc[site].push(item);
+            return acc;
+        }, {});
+        
+        // 組合 HTML 畫面（每個工地一個群組）
+        let html = '';
+        for (const site in grouped) {
+            html += `<div class="site-group">`;
+            html += `<div class="site-title">📍 ${site}</div>`;
+            
+            const workersHtml = grouped[site].map(e => {
+                return `&nbsp;&nbsp;• ${e.id} ${e.name} <span class="date-range">(${e.start.slice(5)}~${e.end.slice(5)})</span>`;
+            }).join('<br>');
+            
+            html += workersHtml;
+            html += `</div><br>`;
+        }
+        
+        offListEl.innerHTML = html;
     }
-    
-    offListEl.innerHTML = html;
-}
 </script>
 
 </body>
