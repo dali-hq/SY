@@ -67,7 +67,7 @@
         /* 如果中間有加分隔符號（例如 ‧），可以用這行控制顏色 */
         .nav-link span.divider {
             color: #bbb;
-            font-weight: normal;
+            font-weight: normal; font-size: 14px;
         }
         .nav-duty { color: #2c3e50 !important; }
         .nav-duty span { color: #27ae60 !important; }
@@ -228,8 +228,8 @@
 
     <!-- 底部導覽 -->
     <div class="nav-link">
-        <a onclick="showPage('search')">查詢</a>●
-        <a onclick="showPage('overview')">總覽</a>●
+        <a onclick="showPage('search')">查詢</a><span class="divider">●</span>
+        <a onclick="showPage('overview')">總覽</a><span class="divider">●</span>
         <a href="duty.html" class="nav-duty">月曆</a>
     </div>
 </div>
