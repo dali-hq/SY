@@ -34,33 +34,39 @@
         .btn-clear { flex: 1; padding: 15px 0; background-color: #95a5a6; color: white; border: none; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer; }
     
         
-/* 導覽連結（放大字體與行距） */
+/* 下方導覽列：純文字、加上分隔點、字體放大到 20px */
         .nav-link { 
-            margin-top: 20px; 
+            margin-top: 25px; 
             padding-top: 15px; 
             border-top: 1px solid #eee; 
-            font-size: 20px; /* 字體從原本的 14px 放大到 16px */
+            font-size: 20px; /* 字體放大至 20px */
             line-height: 2.5; 
             display: flex; 
             flex-wrap: wrap; 
             justify-content: center; 
-            gap: 10px; /* 增加按鈕間距 */
+            align-items: center;
+            gap: 12px; /* 控制文字與分隔點的間距 */
         }
         .nav-link a { 
-            background-color: #CAFFFF; /* 改為淡青色底色 */
-            color: #000000 !important; /* 黑色字體 */
+            background: none !important; /* 移除背景色 */
+            border: none !important; /* 移除邊框 */
+            padding: 0 !important; /* 移除內距 */
+            color: #4a90e2; 
             text-decoration: none; 
             font-weight: bold; 
             cursor: pointer; 
-            padding: 4px 8px; /* 讓框框只比字大一點點 */
-            border-radius: 2px; /* 圓角改為 2 */
-            border: 1px solid #a8e6e6; /* 加一點極淡的邊框讓框體更立體 */
             white-space: nowrap; 
-            font-size: 16px; 
-            transition: background 0.2s;
+            font-size: 20px; /* 確保連結文字同步放大 */
+            transition: color 0.2s;
         }
         .nav-link a:hover {
-            background-color: #b0f5f5; /* 滑鼠懸停時稍微深一點 */
+            color: #2c3e50; /* 滑鼠懸停時顏色微調 */
+            text-decoration: underline; /* 懸停時帶有底線提示 */
+        }
+        /* 如果中間有加分隔符號（例如 ‧），可以用這行控制顏色 */
+        .nav-link span.divider {
+            color: #bbb;
+            font-weight: normal;
         }
         .nav-duty { color: #2c3e50 !important; }
         .nav-duty span { color: #27ae60 !important; }
