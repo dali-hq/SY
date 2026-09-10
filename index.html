@@ -2,14 +2,16 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="referrer" content="no-referrer">
     <link rel="icon" href="logo.png" type="image/png">
     <title>實毅營造員工</title>
     <script src="data.js"></script>
 <style>
-        body { font-family: "Microsoft JhengHei", sans-serif; text-align: center; background: #f5f7fa; padding: 15px; margin: 0; }
-        
+        body { font-family: "Noto Serif TC", "Microsoft JhengHei", serif, sans-serif; text-align: center; background: #f5f7fa; padding: 15px; margin: 0; }
         /* 基礎卡片容器：在電腦版會透過 .wide 撐開 */
         .card { 
             background: white; padding: 25px; border-radius: 12px; 
@@ -44,9 +46,27 @@
         .btn-search { flex: 2; padding: 15px 0; background-color: #FF359A; color: white; border: none; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer; }
         .btn-clear { flex: 1; padding: 15px 0; background-color: #95a5a6; color: white; border: none; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer; }
     
-        /* 導覽連結 */
-        .nav-link { margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee; font-size: 14px; line-height: 2.5; display: flex; flex-wrap: wrap; justify-content: center; }
-        .nav-link a { color: #4a90e2; text-decoration: none; font-weight: bold; cursor: pointer; margin: 0 10px; white-space: nowrap; }
+        
+/* 導覽連結（放大字體與行距） */
+        .nav-link { 
+            margin-top: 20px; 
+            padding-top: 15px; 
+            border-top: 1px solid #eee; 
+            font-size: 16px; /* 字體從原本的 14px 放大到 16px */
+            line-height: 2.5; 
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+        }
+        .nav-link a { 
+            color: #4a90e2; 
+            text-decoration: none; 
+            font-weight: bold; 
+            cursor: pointer; 
+            margin: 0 10px; 
+            white-space: nowrap; 
+            font-size: 16px; /* 確保連結文字同步放大 */
+        }
         .nav-duty { color: #2c3e50 !important; }
         .nav-duty span { color: #27ae60 !important; }
 
