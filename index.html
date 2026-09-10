@@ -388,22 +388,31 @@
     }
 
     // 渲染員工卡片
-    function renderCards(targetId, list) {
-        const div = document.getElementById(targetId);
-        if (!div) return;
-        if (!list || list.length === 0) {
-            div.innerHTML = "<div style='width:100%; padding:20px;'>查無相關資料</div>";
-            return;
-        }
-        list.sort((a, b) => (parseInt(a.id.toString().replace(/\D/g,'')) || 0) - (parseInt(b.id.toString().replace(/\D/g,'')) || 0));
-        div.innerHTML = list.map(e => `
-            <div class='emp-card'>
-                <div class='emp-name-tag'>${e.id} ${e.name}</div>
-                <img src='${e.photoUrl}' onerror="this.src='https://via.placeholder.com/150x200?text=No+Photo'">
-                <div class='emp-site-tag'>${e.site ? '📍 ' + e.site : ''}</div>
-            </div>
-        `).join('');
+function renderCards(targetId, list) {
+    const div = document.getElementById(targetId);
+    if (!div) return;
+    
+    // 💡 增加防護：檢查 WORKER_DATA 是否成功載入
+    if (typeof WORKER_DATA === 'undefined') {
+        div.innerHTML = "<div style='width:100%; padding:20px; color:red;'>錯誤：找不到員工資料 (WORKER_DATA 未載入)</div>";
+        return;
     }
+
+    if (!list || list.length === 0) {
+        div.innerHTML = "<div style='width:100%; padding:20px;'>查無相關資料</div>";
+        return;
+    }
+    
+    list.sort((a, b) => (parseInt(a.id.toString().replace(/\D/g,'')) || 0) - (parseInt(b.id.toString().replace(/\D/g,'')) || 0));
+    
+    div.innerHTML = list.map(e => `
+        <div class='emp-card'>
+            <div class='emp-name-tag'>${e.id} ${e.name}</div>
+            <img src='${e.photoUrl}' onerror="this.src='https://via.placeholder.com/150x200?text=No+Photo'">
+            <div class='emp-site-tag'>${e.site ? '📍 ' + e.site : ''}</div>
+        </div>
+    `).join('');
+}
     
     function doSearch() {
         const val = document.getElementById('empId').value.trim();
