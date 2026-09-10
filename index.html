@@ -353,19 +353,26 @@
         if (navSearch) {
             navSearch.addEventListener('click', function(e) {
                 e.preventDefault();
-                showPage('search');
+                showPage('search', true); // 帶入 true 代表要記錄歷史
             });
         }
 
         if (navOverview) {
             navOverview.addEventListener('click', function(e) {
                 e.preventDefault();
-                showPage('overview');
+                showPage('overview', true); // 帶入 true 代表要記錄歷史
             });
         }
+
+        // 3. 監聽瀏覽器的上一頁/下一頁 (返回鍵)
+        window.addEventListener('popstate', function(event) {
+            // 如果歷史紀錄裡有記錄是哪一頁，就切過去；沒有預設回 overview
+            const targetPage = event.state && event.state.page ? event.state.page : 'overview';
+            showPage(targetPage, false); // false 代表這是按返回觸發的，不用重複 pushState
+        });
     };
 
-    function showPage(p) {
+    function showPage(p, pushHistory = true) {
         const pages = ['search', 'overview'];
         pages.forEach(id => {
             const el = document.getElementById('page-' + id);
@@ -387,8 +394,12 @@
                 card.classList.remove('wide');
             }
         }
-    }
 
+        // 💡 如果是手動點擊切換，才寫入瀏覽器歷史，避免重複推入
+        if (pushHistory) {
+            history.pushState({ page: p }, '', '');
+        }
+    }
     // 渲染員工卡片
     function renderCards(targetId, list) {
         const div = document.getElementById(targetId);
