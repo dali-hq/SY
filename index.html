@@ -51,7 +51,7 @@
             background: none !important; /* 移除背景色 */
             border: none !important; /* 移除邊框 */
             padding: 0 !important; /* 移除內距 */
-            color: #4a90e2; 
+            color: #444; 
             text-decoration: none; 
             font-weight: bold; 
             cursor: pointer; 
@@ -60,7 +60,8 @@
             transition: color 0.2s;
         }
         .nav-link a:hover {
-            color: #2c3e50; /* 滑鼠懸停時顏色微調 */
+            color: #222; /* 滑鼠懸停時顏色微調 */
+            font-weight: bold !important; /* 懸停時變粗 */
             text-decoration: underline; /* 懸停時帶有底線提示 */
         }
         /* 如果中間有加分隔符號（例如 ‧），可以用這行控制顏色 */
@@ -227,9 +228,9 @@
 
     <!-- 底部導覽 -->
     <div class="nav-link">
-        <a onclick="showPage('search')">🔍 查詢</a>|
-        <a onclick="showPage('overview')">🏢 總覽</a>|
-        <a href="duty.html" class="nav-duty">♚ <span>月曆</span></a>
+        <a onclick="showPage('search')">查詢</a>|
+        <a onclick="showPage('overview')">總覽</a>|
+        <a href="duty.html" class="nav-duty">♚<span>月曆</span></a>
     </div>
 </div>
 
