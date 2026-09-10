@@ -10,6 +10,7 @@
     <link rel="icon" href="logo.png" type="image/png">
     <title>實毅營造員工</title>
     <script src="data.js"></script>
+    <script src="dayoff.js"></script>
 <style>
         body { font-family: "Noto Serif TC", "Microsoft JhengHei", serif, sans-serif; text-align: center; background: #f5f7fa; padding: 15px; margin: 0; }
         /* 基礎卡片容器：在電腦版會透過 .wide 撐開 */
@@ -319,23 +320,32 @@
     }
 
     // 今日休假查詢
-    function loadOffDuty() {
-        const offListEl = document.getElementById('off-list');
-        if (!offListEl) return;
-        if (typeof LEAVE_DATA === 'undefined') {
-            offListEl.innerHTML = "尚在建構";
-            return;
-        }
-        
-        const today = new Date().toISOString().slice(0,10).replace(/-/g,"/");
-        const list = LEAVE_DATA.filter(d => today >= d.start && today <= d.end);
-        
-        offListEl.innerHTML = list.length ? 
-            list.map(e => {
-                const sitePrefix = e.site ? `(${e.site}) ` : '';
-                return `${sitePrefix}${e.id} ${e.name} (${e.start.slice(5)}~${e.end.slice(5)})`;
-            }).join('<br>') : "尚在建構";
+function loadOffDuty() {
+    const offListEl = document.getElementById('off-list');
+    if (!offListEl) return;
+    
+    // 檢查改為正確的變數名稱 DAYOFF
+    if (typeof DAYOFF === 'undefined') {
+        offListEl.innerHTML = "今日無人休假";
+        return;
     }
+    
+    // 取得今天的「民國年」日期格式 (例如: 115/09/10)
+    const now = new Date();
+    const minguoYear = now.getFullYear() - 1911;
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const today = `${minguoYear}/${month}/${day}`;
+    
+    // 比對民國年日期的區間
+    const list = DAYOFF.filter(d => today >= d.start && today <= d.end);
+    
+    offListEl.innerHTML = list.length ? 
+        list.map(e => {
+            const sitePrefix = e.site ? `(${e.site}) ` : '';
+            return `${sitePrefix}${e.id} ${e.name} (${e.start.slice(5)}~${e.end.slice(5)})`;
+        }).join('<br>') : "今日無人休假";
+}
 </script>
 
 </body>
