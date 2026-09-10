@@ -23,21 +23,8 @@
         .card.wide { max-width: 1450px; }
 
         /* 標題 Logo 樣式 */
-        .page-title {
-            color: #2c3e50;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            font-size: 30px;
-            margin-top: 0;
-            margin-bottom: 20px;
-        }
-        .page-title img {
-            width: 38px;
-            height: 38px;
-            object-fit: contain;
-        }
+        .page-title {color: #2c3e50; display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 30px; margin-top: 0; margin-bottom: 20px;  }
+        .page-title img { width: 38px; height: 38px; object-fit: contain; }
 
         /* 搜尋區域 */
         .search-section { max-width: 400px; margin: 0 auto; }
@@ -57,19 +44,24 @@
             display: flex; 
             flex-wrap: wrap; 
             justify-content: center; 
+            gap: 8px; /* 增加按鈕間距 */
         }
         .nav-link a { 
-            color: #4a90e2; 
+            background-color: #FF60AF; /* 改為 #FF60AF 底色 */
+            color: #000000 !important; /* 改為黑色字體 */
             text-decoration: none; 
             font-weight: bold; 
             cursor: pointer; 
-            margin: 0 10px; 
+            padding: 6px 14px; /* 加上一點內距讓它看起來像質感按鈕 */
+            border-radius: 20px; /* 圓角膠囊外觀 */
             white-space: nowrap; 
-            font-size: 20px; /* 確保連結文字同步放大 */
+            font-size: 16px; 
+            transition: background 0.2s;
         }
+        .nav-link a:hover { background-color: #ff3b99; /* 滑鼠懸停時稍微加深 */ }
         .nav-duty { color: #2c3e50 !important; }
         .nav-duty span { color: #27ae60 !important; }
-
+    
         /* 容器：強化水平置中與高度對齊 */
         .result-container { 
             display: flex; 
