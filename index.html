@@ -62,7 +62,17 @@
             margin: 0 auto; 
         }
 
-        /* 員工卡片大調整樣式 */
+/* 讓照片維持統一的比例與大小（例如 3:4 比例，可自行調整） */
+        .emp-card img { 
+            width: 100%; 
+            height: auto; 
+            aspect-ratio: 3 / 4; /* 強制所有照片為固定比例 */
+            object-fit: cover;   /* 圖片裁切填滿，不變形 */
+            border-radius: 6px; 
+            border: 1px solid #eee; 
+        }
+
+        /* 確保卡片本身排版整齊對齊 */
         .emp-card { 
             background: #fff; 
             border: 1px solid #333; 
@@ -72,6 +82,9 @@
             box-sizing: border-box; 
             text-align: center; 
             width: calc((100% - 15px) / 2); 
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* 讓內容上下撐開對齊 */
             transition: transform 0.2s;
         }
         .emp-card:hover { transform: translateY(-2px); }
@@ -88,15 +101,7 @@
             text-overflow: ellipsis; 
             white-space: nowrap; 
         }
-        /* 照片樣式 */
-        .emp-card img { 
-            width: 100%; 
-            height: auto; 
-            aspect-ratio: 3 / 4; 
-            object-fit: cover; 
-            border-radius: 6px; 
-            border: 1px solid #eee; 
-        }
+
         .emp-card .emp-site-tag { font-size: 13px; color: #e67e22; margin-top: 6px; font-weight: bold; }
 
         /* 電腦版：強制定製一行 8 個 */
