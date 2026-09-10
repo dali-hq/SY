@@ -260,8 +260,8 @@ const WORKER_DATA = [
   {
     "id": "33031",
     "name": "潘設",
-    "photoId": "1AtYL53i3bmp7as73iVWSJtPLcXTXbYq7E",
-    "photoUrl": "https://lh3.googleusercontent.com/d1AtYL53i3bmp7as73iVWSJtPLcXTXbYq7EE"
+    "photoId": "1AsxGm1ACpz6kfXYqtZTm3zL7pjYT7D7E",
+    "photoUrl": "https://lh3.googleusercontent.com/d/1AsxGm1ACpz6kfXYqtZTm3zL7pjYT7D7E"
   },
   {
     "id": "33033",
@@ -326,8 +326,8 @@ const WORKER_DATA = [
   {
     "id": "34007",
     "name": "武玉純",
-    "photoId": "1J6XTqVkBb9KAkWphdUvnGJ25LhmRTV2o7o7",
-    "photoUrl": "https://lh3.googleusercontent.com/d/1J6XTqVkBb9KAkWphdUvnGJ25LhmRTV2o7Vo7"
+    "photoId": "1JNnKX7wwGXn64UScykC58JubdvZFpVo7",
+    "photoUrl": "https://lh3.googleusercontent.com/d/1JNnKX7wwGXn64UScykC58JubdvZFpVo7"
   },
   {
     "id": "34008",
@@ -398,8 +398,8 @@ const WORKER_DATA = [
   {
     "id": "34021",
     "name": "丁曰勇",
-    "photoId139omiVhU3vMo6QoceaWsaZjygpSjfEZ1AompA",
-    "photoUrl": "https://lh3.googleusercontent.c139omiVhU3vMo6QoceaWsaZjygpSjfEZ1A3ompA"
+    "photoId": "139sfScKPEY6EGvLinPaCM62DbYH3ompA",
+    "photoUrl": "https://lh3.googleusercontent.com/d/139sfScKPEY6EGvLinPaCM62DbYH3ompA"
   },
   {
     "id": "34022",
@@ -446,14 +446,14 @@ const WORKER_DATA = [
   {
     "id": "35007",
     "name": "黃海厚",
-    "photo1bfFJBTzGtbQu4RyxBy5iLXcYScbsaRL2yZ1GL2",
-    "photoUrl": "https://lh3.googleusercontent.1bfFJBTzGtbQu4RyxBy5iLXcYScbsaRL2yZ1GL2"
+    "photoId": "1b5YHWdbRaZiYebsBu87A8T2MtSyZ1GL2",
+    "photoUrl": "https://lh3.googleusercontent.com/d/1b5YHWdbRaZiYebsBu87A8T2MtSyZ1GL2"
   },
   {
     "id": "35008",
     "name": "黎德英",
-    "photo1CBi3KWg7isVzkftDddhGCwTQQ8zT9bC7qteVegK",
-    "photoUrl": "https://lh3.googleusercontent1CBi3KWg7isVzkftDddhGCwTQQ8zT9bC7qpteVegK"
+    "photoId": "1CBiFYRju5B7DABzGfEmboYAX1pteVegK",
+    "photoUrl": "https://lh3.googleusercontent.com/d/1CBiFYRju5B7DABzGfEmboYAX1pteVegK"
   },
   {
     "id": "35009",
@@ -476,8 +476,8 @@ const WORKER_DATA = [
   {
     "id": "35016",
     "name": "杜德強",
-    "pho1Z6qB2kb7BUbr6fwZdndKpfSQP7c6XVZydKJzk9Zy",
-    "photoUrl": "https://lh3.googleuserconten1Z6qB2kb7BUbr6fwZdndKpfSQP7c6XVZydKJzk9Zy"
+    "photoId": "1bVEvFg1Lbo29pgjALf4P9ejHdKJzk9Zy",
+    "photoUrl": "https://lh3.googleusercontent.com/d/1bVEvFg1Lbo29pgjALf4P9ejHdKJzk9Zy"
   },
   {
     "id": "35018",
@@ -494,8 +494,8 @@ const WORKER_DATA = [
   {
     "id": "35020",
     "name": "阮文瑞",
-    "pho19doj1UGQy4ATiuY6C4njfNdCS92r6qzxYVcYBpzxY",
-    "photoUrl": "https://lh3.googleuserconte19doj1UGQy4ATiuY6C4njfNdCS92r6qzxYFVcYBpzxY"
+    "photoId": "1nf49GggeB7rvEzvjHDHNbiWFVcYBpzxY",
+    "photoUrl": "https://lh3.googleusercontent.com/d/1nf49GggeB7rvEzvjHDHNbiWFVcYBpzxY"
   },
   {
     "id": "35021",
@@ -506,8 +506,8 @@ const WORKER_DATA = [
   {
     "id": "35022",
     "name": "阮文中",
-    "p1d2MXbkYYumdzBjSMauUuxngHvEyUGKqEGgYPCUHuUE",
-    "photoUrl": "https://lh3.googleusercont1d2MXbkYYumdzBjSMauUuxngHvEyUGKqEGgYPCUHuUE"
+    "photoId": "1dLabd5cHuZEUC95DtGZ2HWGgYPCUHuUE",
+    "photoUrl": "https://lh3.googleusercontent.com/d/1dLabd5cHuZEUC95DtGZ2HWGgYPCUHuUE"
   },
   {
     "id": "35024",
@@ -656,8 +656,8 @@ const WORKER_DATA = [
   {
     "id": "36019",
     "name": "鄧國山",
-    "p1En9orAmUPJgvYXFEVUYvup9eToWFQTiqeE3zzMXdTNe",
-    "photoUrl": "https://lh3.googleusercon1En9orAmUPJgvYXFEVUYvup9eToWFQTiqeZE3zzMXdTNe"
+    "photoId": "1En2dfBRAQjdY9iPfhi6oAZE3zzMXdTNe",
+    "photoUrl": "https://lh3.googleusercontent.com/d/1En2dfBRAQjdY9iPfhi6oAZE3zzMXdTNe"
   },
   {
     "id": "36020",
@@ -704,8 +704,8 @@ const WORKER_DATA = [
   {
     "id": "36032",
     "name": "永諾",
-    "photoId": "1jgzPRLveLhFh7mJjq7cGqfvEV2MWfcvkhd4hxBXUna3k",
-    "photoUrl": "https://lh3.googleuserco1jgzPRLveLhFh7mJjq7cGqfvEV2MWfcvkhd4hxBXUna3k"
+    "photoId": "1jaqECkhF5aeFUUJZowW1hd4hxBXUna3k",
+    "photoUrl": "https://lh3.googleusercontent.com/d/1jaqECkhF5aeFUUJZowW1hd4hxBXUna3k"
   },
   {
     "id": "36033",
