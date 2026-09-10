@@ -17,8 +17,8 @@
             width: 100%; max-width: 450px; box-sizing: border-box; 
             margin: 10px auto; transition: max-width 0.3s; 
         }
-        /* 電腦版撐開後的寬度（配合一列 8 個稍微加寬至 1350px） */
-        .card.wide { max-width: 1350px; }
+        /* 電腦版撐開後的寬度（配合一列 8 個加寬至 1450px 確保空間充足） */
+        .card.wide { max-width: 1450px; }
 
         /* 標題 Logo 樣式 */
         .page-title {
@@ -50,24 +50,12 @@
         .nav-duty { color: #2c3e50 !important; }
         .nav-duty span { color: #27ae60 !important; }
 
-        /* 容器：強化水平置中 */
+        /* 容器：強化水平置中與高度對齊 */
         .result-container { 
             display: flex; 
             flex-wrap: wrap; 
             justify-content: center; 
-            align-items: flex-start; 
-            gap: 10px; 
-            padding: 10px 0; 
-            width: 100%; 
-            margin: 0 auto; 
-        }
-
-/* 容器：強化水平置中 */
-        .result-container { 
-            display: flex; 
-            flex-wrap: wrap; 
-            justify-content: center; 
-            align-items: stretch; /* 讓同一列的卡片高度自動對齊 */
+            align-items: stretch; 
             gap: 10px; 
             padding: 10px 0; 
             width: 100%; 
@@ -86,15 +74,15 @@
             width: calc((100% - 15px) / 2); 
             display: flex;
             flex-direction: column;
-            justify-content: space-between; /* 上下內容平均分配，確保高度一致 */
+            justify-content: space-between; 
             transition: transform 0.2s;
         }
         .emp-card:hover { transform: translateY(-2px); }
         
-        /* 姓名與編號移至上方（字體放大） */
+        /* 姓名與編號標籤（字體放大） */
         .emp-card .emp-name-tag { 
             font-weight: bold; 
-            font-size: 17px; 
+            font-size: 18px; /* 手機預設放大 */
             margin-bottom: 6px; 
             color: #2c3e50; 
             border-bottom: 2px solid #f0f0f0; 
@@ -117,22 +105,22 @@
 
         .emp-card .emp-site-tag { font-size: 13px; color: #e67e22; margin-top: 6px; font-weight: bold; }
 
-        /* 電腦版：強制定製一行 8 個 */
+        /* 電腦版：強制定製一行 8 個（均分等寬） */
         @media (min-width: 1024px) {
             .result-container { 
                 display: grid !important; 
                 justify-content: center; 
-                grid-template-columns: repeat(8, 1fr) !important; 
-                max-width: 1350px; 
-                gap: 10px; 
+                grid-template-columns: repeat(8, minmax(0, 1fr)) !important; /* 鎖死絕對等寬 */
+                max-width: 100% !important; 
+                gap: 10px !important; 
                 margin: 0 auto;
             }
             .emp-card { 
-                width: 100% !important; /* 在 Grid 佈局下吃滿 1/8 欄位 */
+                width: 100% !important; 
                 padding: 6px; 
             }
             .emp-card .emp-name-tag {
-                font-size: 15px; /* 8個一列時稍微調整字體大小避免擠壓 */
+                font-size: 16px; /* 8個一列時字體放大至 16px，清晰好讀 */
             }
         }
 
@@ -142,36 +130,41 @@
         /* 手機斷行控制 */
         @media (max-width: 600px) { .mobile-br { display: block; width: 100%; height: 0; } }
         @media (min-width: 601px) { .mobile-br { display: none; } }
-    /* 列印專屬樣式：強制列印時維持 8 欄與寬版排版 */
-    @media print {
-        body {
-            background: white !important;
-            padding: 0 !important;
+
+        /* 列印專屬樣式：強制橫向、8 欄、等寬 */
+        @media print {
+            @page {
+                size: landscape;
+                margin: 8mm;
+            }
+            body {
+                background: white !important;
+                padding: 0 !important;
+            }
+            .card, .card.wide {
+                max-width: 100% !important;
+                width: 100% !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            /* 隱藏不需要列印的區塊 */
+            .search-section, .btn-group, .nav-link, #off-duty-box {
+                display: none !important;
+            }
+            /* 列印時強制 8 欄等寬 */
+            .result-container {
+                display: grid !important;
+                grid-template-columns: repeat(8, minmax(0, 1fr)) !important;
+                gap: 8px !important;
+                width: 100% !important;
+            }
+            .emp-card {
+                width: 100% !important;
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
         }
-        .card, .card.wide {
-            max-width: 100% !important;
-            width: 100% !important;
-            box-shadow: none !important;
-            padding: 5px !important;
-            margin: 0 !important;
-        }
-        /* 隱藏不需要印出來的搜尋框與下方導覽 */
-        .search-section, .btn-group, .nav-link, #off-duty-box {
-            display: none !important;
-        }
-        /* 強制列印時呈現 8 欄網格 */
-        .result-container {
-            display: grid !important;
-            grid-template-columns: repeat(8, 1fr) !important;
-            gap: 6px !important;
-            width: 100% !important;
-        }
-        .emp-card {
-            width: 100% !important;
-            break-inside: avoid; /* 避免卡片從中間被切斷跨頁 */
-            page-break-inside: avoid;
-        }
-    }
     </style>
 </head>
 <body>
