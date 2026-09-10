@@ -9,8 +9,6 @@
     <meta name="referrer" content="no-referrer">
     <link rel="icon" href="logo.png" type="image/png">
     <title>實毅營造員工</title>
-    <script src="data.js"></script>
-    <script src="dayoff.js"></script>
     <style>
         body {
             font-family: "Noto Serif TC", "Microsoft JhengHei", serif, sans-serif;
@@ -339,6 +337,10 @@
     <div id="off-list">讀取中...</div>
 </div>
 
+<!-- 💡 把資料檔移到這裡，確保 DOM 載入後才讀取 -->
+<script src="data.js"></script>
+<script src="dayoff.js"></script>
+
 <script>
     window.onload = function() {
         // 1. 載入今日休假
@@ -388,31 +390,30 @@
     }
 
     // 渲染員工卡片
-function renderCards(targetId, list) {
-    const div = document.getElementById(targetId);
-    if (!div) return;
-    
-    // 💡 增加防護：檢查 WORKER_DATA 是否成功載入
-    if (typeof WORKER_DATA === 'undefined') {
-        div.innerHTML = "<div style='width:100%; padding:20px; color:red;'>錯誤：找不到員工資料 (WORKER_DATA 未載入)</div>";
-        return;
-    }
+    function renderCards(targetId, list) {
+        const div = document.getElementById(targetId);
+        if (!div) return;
+        
+        if (typeof WORKER_DATA === 'undefined') {
+            div.innerHTML = "<div style='width:100%; padding:20px; color:red;'>錯誤：找不到員工資料 (WORKER_DATA 未載入)</div>";
+            return;
+        }
 
-    if (!list || list.length === 0) {
-        div.innerHTML = "<div style='width:100%; padding:20px;'>查無相關資料</div>";
-        return;
+        if (!list || list.length === 0) {
+            div.innerHTML = "<div style='width:100%; padding:20px;'>查無相關資料</div>";
+            return;
+        }
+        
+        list.sort((a, b) => (parseInt(a.id.toString().replace(/\D/g,'')) || 0) - (parseInt(b.id.toString().replace(/\D/g,'')) || 0));
+        
+        div.innerHTML = list.map(e => `
+            <div class='emp-card'>
+                <div class='emp-name-tag'>${e.id} ${e.name}</div>
+                <img src='${e.photoUrl}' onerror="this.src='https://via.placeholder.com/150x200?text=No+Photo'">
+                <div class='emp-site-tag'>${e.site ? '📍 ' + e.site : ''}</div>
+            </div>
+        `).join('');
     }
-    
-    list.sort((a, b) => (parseInt(a.id.toString().replace(/\D/g,'')) || 0) - (parseInt(b.id.toString().replace(/\D/g,'')) || 0));
-    
-    div.innerHTML = list.map(e => `
-        <div class='emp-card'>
-            <div class='emp-name-tag'>${e.id} ${e.name}</div>
-            <img src='${e.photoUrl}' onerror="this.src='https://via.placeholder.com/150x200?text=No+Photo'">
-            <div class='emp-site-tag'>${e.site ? '📍 ' + e.site : ''}</div>
-        </div>
-    `).join('');
-}
     
     function doSearch() {
         const val = document.getElementById('empId').value.trim();
@@ -456,14 +457,12 @@ function renderCards(targetId, list) {
             return;
         }
         
-        // 取得今天的「民國年」日期格式 (例如: 115/09/10)
         const now = new Date();
         const minguoYear = now.getFullYear() - 1911;
         const month = String(now.getMonth() + 1).padStart(2, '0');
         const day = String(now.getDate()).padStart(2, '0');
         const today = `${minguoYear}/${month}/${day}`;
         
-        // 篩選出今天在休假區間內的名單
         const list = DAYOFF.filter(d => today >= d.start && today <= d.end);
         
         if (list.length === 0) {
@@ -471,7 +470,6 @@ function renderCards(targetId, list) {
             return;
         }
         
-        // 依照工地進行分組 (Group by site)
         const grouped = list.reduce((acc, item) => {
             const site = item.site || '其他工地';
             if (!acc[site]) {
@@ -481,7 +479,6 @@ function renderCards(targetId, list) {
             return acc;
         }, {});
         
-        // 組合 HTML 畫面（每個工地一個群組）
         let html = '';
         for (const site in grouped) {
             html += `<div class="site-group">`;
