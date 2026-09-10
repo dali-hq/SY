@@ -327,8 +327,8 @@
 
 <!-- 底部導覽 -->
 <div class="nav-link">
-    <a href="javascript:void(0);" onclick="showPage('search'); return false;">查詢</a><span class="divider">●</span>
-    <a href="javascript:void(0);" onclick="showPage('overview'); return false;">總覽</a><span class="divider">●</span>
+    <a href="#" id="nav-search">查詢</a><span class="divider">●</span>
+    <a href="#" id="nav-overview">總覽</a><span class="divider">●</span>
     <a href="duty.html" class="nav-duty">月曆</a>
 </div>
 </div>
@@ -341,6 +341,18 @@
 
 <script>
     window.onload = function() { loadOffDuty(); };
+
+    // 綁定導覽列點擊事件，徹底阻止預設跳轉
+    document.getElementById('nav-search').addEventListener('click', function(e) {
+        e.preventDefault(); // 阻止 <a> 標籤的預設跳轉
+        showPage('search');
+    });
+
+    document.getElementById('nav-overview').addEventListener('click', function(e) {
+        e.preventDefault(); // 阻止 <a> 標籤的預設跳轉
+        showPage('overview');
+    });
+};
 
     function showPage(p) {
         const pages = ['search', 'overview'];
