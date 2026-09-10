@@ -4,22 +4,139 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>♚2026月曆</title>
+    <!-- 引入 Google Fonts 思源宋體 (Noto Serif TC) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
+
     <style>
         :root { --primary: #2c3e50; --weekend: #e74c3c; --holiday: #f39c12; --bg: #f8f9fa; }
-        body { font-family: "Microsoft JhengHei", sans-serif; background: var(--bg); display: flex; justify-content: center; padding: 20px; }
-        .card { background: white; padding: 20px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .btn { border: none; background: #eee; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 18px; }
-        .summary { background: #f0f7ff; padding: 15px; border-radius: 12px; text-align: center; margin-bottom: 20px; line-height: 1.6; border: 1px solid #d0e4f7; }
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; }
-        .day-name { font-weight: bold; color: #95a5a6; padding-bottom: 10px; font-size: 13px; }
-        .day { padding: 12px 0; border-radius: 8px; font-size: 15px; border: 1px solid #f0f0f0; }
-        .is-weekend { color: var(--weekend); background: #fff5f5; font-weight: bold; }
-        .is-holiday-weekday { background: #fff9eb; color: var(--holiday); font-weight: bold; border: 1px solid var(--holiday); }
+        
+        /* 全站改用思源宋體 */
+        body { 
+            font-family: "Noto Serif TC", "Microsoft JhengHei", serif; 
+            background: var(--bg); 
+            display: flex; 
+            justify-content: center; 
+            padding: 20px; 
+        }
+        
+        .card { 
+            background: white; 
+            padding: 25px; 
+            border-radius: 16px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+            width: 100%; 
+            max-width: 480px; 
+        }
+
+        .header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 20px; 
+        }
+
+        /* 月份切換按鈕放大與宋體化 */
+        .btn { 
+            border: none; 
+            background: #eee; 
+            padding: 10px 18px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-size: 20px; 
+            font-family: "Noto Serif TC", serif;
+            font-weight: bold;
+        }
+
+        /* 月份標題放大 */
+        #monthDisplay {
+            font-size: 26px;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        /* 統計結果文字放大 */
+        .summary { 
+            background: #f0f7ff; 
+            padding: 18px; 
+            border-radius: 12px; 
+            text-align: center; 
+            margin-bottom: 20px; 
+            line-height: 1.8; 
+            border: 1px solid #d0e4f7; 
+            font-size: 17px; 
+        }
+
+        .calendar-grid { 
+            display: grid; 
+            grid-template-columns: repeat(7, 1fr); 
+            gap: 6px; 
+            text-align: center; 
+        }
+
+        /* 星期名稱放大 */
+        .day-name { 
+            font-weight: bold; 
+            color: #7f8c8d; 
+            padding-bottom: 10px; 
+            font-size: 15px; 
+        }
+
+        /* 日期方格與數字放大 */
+        .day { 
+            padding: 14px 0; 
+            border-radius: 8px; 
+            font-size: 18px; 
+            font-weight: bold;
+            border: 1px solid #f0f0f0; 
+        }
+
+        .is-weekend { color: var(--weekend); background: #fff5f5; }
+        .is-holiday-weekday { background: #fff9eb; color: var(--holiday); border: 1px solid var(--holiday); }
+        
         .tag { font-weight: bold; font-size: 18px; display: block; margin-top: 5px; }
-        .plus { color: #27ae60; } .minus { color: var(--weekend); }
-        .holiday-list { margin-top: 20px; border-top: 2px dashed #eee; padding-top: 15px; }
-        .holiday-item { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 5px; color: #555; background: #fffcf5; padding: 5px 10px; border-radius: 5px; }
+        .plus { color: #27ae60; } 
+        .minus { color: var(--weekend); }
+
+        .holiday-list { 
+            margin-top: 25px; 
+            border-top: 2px dashed #eee; 
+            padding-top: 15px; 
+            font-size: 16px;
+        }
+
+        .holiday-item { 
+            display: flex; 
+            justify-content: space-between; 
+            font-size: 15px; 
+            margin-bottom: 6px; 
+            color: #555; 
+            background: #fffcf5; 
+            padding: 8px 12px; 
+            border-radius: 5px; 
+        }
+
+        /* 返回按鈕放大 */
+        .back-link-container {
+            text-align: center; 
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+        .back-link-container a { 
+            text-decoration: none; 
+            background: #eee; 
+            padding: 8px 20px; 
+            border-radius: 20px; 
+            font-size: 18px; 
+            color: #333; 
+            font-weight: bold;
+            display: inline-block;
+            transition: background 0.2s;
+        }
+        .back-link-container a:hover {
+            background: #e0e0e0;
+        }
     </style>
 </head>
 <body>
@@ -43,10 +160,10 @@
         <strong>📌 平日國假 (額外加假)：</strong>
         <div id="listContent" style="margin-top:10px;"></div>
     </div>
-    <div style="text-align: center; margin-bottom: 20px;">
-  <a href="index.html" style="text-decoration: none; background: #eee; padding: 5px 15px; border-radius: 20px; font-size: 20px; color: #333;">◀ 返回實毅查詢</a>
-</div>
 
+    <div class="back-link-container">
+        <a href="index.html">◀ 返回實毅查詢</a>
+    </div>
 </div>
 
 <script>
@@ -105,7 +222,6 @@
                 classes.push("is-weekend");
                 weekendCount++;
             } else if (isHoliday) {
-                // 平日國假：標黃框、算加假
                 classes.push("is-holiday-weekday");
                 weekdayHolidayCount++;
                 holidayDetailsHTML += `<div class="holiday-item"><span>${month}/${d}</span><span>${monthHolidays[d]}</span></div>`;
@@ -121,7 +237,7 @@
                        (diff < 0) ? `<span class="tag minus">💼 需值班 ${Math.abs(diff)} 天</span>` : `<span class="tag">⚖️ 剛好休完</span>`;
         
         resDiv.innerHTML = `應休 <strong>${totalRest}</strong> 天 (8+${weekdayHolidayCount}) | 周末 <strong>${weekendCount}</strong> 天${statusTag}`;
-        document.getElementById('listContent').innerHTML = holidayDetailsHTML || "<div style='color:#ccc; font-size:14px;'>本月無平日國假</div>";
+        document.getElementById('listContent').innerHTML = holidayDetailsHTML || "<div style='color:#aaa; font-size:14px; padding: 4px 0;'>本月無平日國假</div>";
     }
 
     function changeMonth(step) { currentViewDate.setMonth(currentViewDate.getMonth() + step); render(); }
