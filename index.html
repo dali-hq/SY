@@ -7,7 +7,7 @@
     <link rel="icon" href="logo.png" type="image/png">
     <title>實毅員工</title>
     <script src="data.js"></script>
-    <style>
+<style>
         body { font-family: "Microsoft JhengHei", sans-serif; text-align: center; background: #f5f7fa; padding: 15px; margin: 0; }
         
         /* 基礎卡片容器：在電腦版會透過 .wide 撐開 */
@@ -17,8 +17,8 @@
             width: 100%; max-width: 450px; box-sizing: border-box; 
             margin: 10px auto; transition: max-width 0.3s; 
         }
-        /* 電腦版撐開後的寬度 */
-        .card.wide { max-width: 1200px; }
+        /* 電腦版撐開後的寬度（配合一列 8 個稍微加寬至 1350px） */
+        .card.wide { max-width: 1350px; }
 
         /* 標題 Logo 樣式 */
         .page-title {
@@ -75,18 +75,38 @@
             transition: transform 0.2s;
         }
         .emp-card:hover { transform: translateY(-2px); }
-        .emp-card img { width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 6px; border: 1px solid #eee; }
-        .emp-card .emp-name-tag { font-weight: bold; font-size: 15px; margin-top: 8px; color: #2c3e50; border-bottom: 2px solid #f0f0f0; padding-bottom: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .emp-card .emp-site-tag { font-size: 12px; color: #e67e22; margin-top: 4px; font-weight: bold; }
+        
+        /* 姓名與編號移至上方（字體放大） */
+        .emp-card .emp-name-tag { 
+            font-weight: bold; 
+            font-size: 17px; /* 放大字體 */
+            margin-bottom: 8px; /* 改為下方留白 */
+            color: #2c3e50; 
+            border-bottom: 2px solid #f0f0f0; 
+            padding-bottom: 6px; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            white-space: nowrap; 
+        }
+        /* 照片樣式 */
+        .emp-card img { 
+            width: 100%; 
+            height: auto; 
+            aspect-ratio: 3 / 4; 
+            object-fit: cover; 
+            border-radius: 6px; 
+            border: 1px solid #eee; 
+        }
+        .emp-card .emp-site-tag { font-size: 13px; color: #e67e22; margin-top: 6px; font-weight: bold; }
 
-        /* 電腦版：強制定製一行 7 個 */
+        /* 電腦版：強制定製一行 8 個 */
         @media (min-width: 1024px) {
             .result-container { 
                 display: grid !important; 
                 justify-content: center; 
-                grid-template-columns: repeat(7, 1fr) !important; 
-                max-width: 1200px; 
-                gap: 12px; 
+                grid-template-columns: repeat(8, 1fr) !important; /* 改為 8 個 */
+                max-width: 1350px; /* 稍微加寬容納 8 欄 */
+                gap: 10px; 
                 margin: 0 auto;
             }
             .emp-card { 
@@ -94,7 +114,7 @@
                 padding: 6px; 
             }
             .emp-card .emp-name-tag {
-                font-size: 14px; 
+                font-size: 16px; /* 保持電腦版清晰的放大字體 */
             }
         }
 
