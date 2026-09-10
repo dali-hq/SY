@@ -194,7 +194,7 @@
         }
     }
 
-    // 渲染員工卡片
+// 渲染員工卡片
     function renderCards(targetId, list) {
         const div = document.getElementById(targetId);
         if (!div) return;
@@ -205,13 +205,13 @@
         list.sort((a, b) => (parseInt(a.id.toString().replace(/\D/g,'')) || 0) - (parseInt(b.id.toString().replace(/\D/g,'')) || 0));
         div.innerHTML = list.map(e => `
             <div class='emp-card'>
-                <img src='${e.photoUrl}' onerror="this.src='https://via.placeholder.com/150x200?text=No+Photo'">
                 <div class='emp-name-tag'>${e.id} ${e.name}</div>
+                <img src='${e.photoUrl}' onerror="this.src='https://via.placeholder.com/150x200?text=No+Photo'">
                 <div class='emp-site-tag'>${e.site ? '📍 ' + e.site : ''}</div>
             </div>
         `).join('');
     }
-
+    
     function doSearch() {
         const val = document.getElementById('empId').value.trim();
         if (!val) {
