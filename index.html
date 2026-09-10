@@ -199,6 +199,18 @@
                 margin-top: 3px !important;
             }
         }
+    .site-group {
+    margin-bottom: 8px;
+}
+.site-title {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 2px;
+}
+.date-range {
+    color: #777;
+    font-size: 13px;
+}
     </style>
 </head>
 <body>
@@ -319,12 +331,11 @@
         }
     }
 
-    // 今日休假查詢
+    // 今日休假查詢（依工地分組）
 function loadOffDuty() {
     const offListEl = document.getElementById('off-list');
     if (!offListEl) return;
     
-    // 檢查改為正確的變數名稱 DAYOFF
     if (typeof DAYOFF === 'undefined') {
         offListEl.innerHTML = "今日無人休假";
         return;
@@ -337,14 +348,39 @@ function loadOffDuty() {
     const day = String(now.getDate()).padStart(2, '0');
     const today = `${minguoYear}/${month}/${day}`;
     
-    // 比對民國年日期的區間
+    // 篩選出今天在休假區間內的名單
     const list = DAYOFF.filter(d => today >= d.start && today <= d.end);
     
-    offListEl.innerHTML = list.length ? 
-        list.map(e => {
-            const sitePrefix = e.site ? `(${e.site}) ` : '';
-            return `${sitePrefix}${e.id} ${e.name} (${e.start.slice(5)}~${e.end.slice(5)})`;
-        }).join('<br>') : "今日無人休假";
+    if (list.length === 0) {
+        offListEl.innerHTML = "今日無人休假";
+        return;
+    }
+    
+    // 💡 依照工地進行分組 (Group by site)
+    const grouped = list.reduce((acc, item) => {
+        const site = item.site || '其他工地';
+        if (!acc[site]) {
+            acc[site] = [];
+        }
+        acc[site].push(item);
+        return acc;
+    }, {});
+    
+    // 組合 HTML 畫面（每個工地一個群組）
+    let html = '';
+    for (const site in grouped) {
+        html += `<div class="site-group">`;
+        html += `<div class="site-title">📍 ${site}</div>`; // 工地標題
+        
+        const workersHtml = grouped[site].map(e => {
+            return `&nbsp;&nbsp;• ${e.id} ${e.name} <span class="date-range">(${e.start.slice(5)}~${e.end.slice(5)})</span>`;
+        }).join('<br>');
+        
+        html += workersHtml;
+        html += `</div><br>`; // 每個工地間隔一行
+    }
+    
+    offListEl.innerHTML = html;
 }
 </script>
 
