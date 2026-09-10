@@ -340,19 +340,28 @@
 </div>
 
 <script>
-    window.onload = function() { loadOffDuty(); };
+    window.onload = function() {
+        // 1. 載入今日休假
+        loadOffDuty();
 
-    // 綁定導覽列點擊事件，徹底阻止預設跳轉
-    document.getElementById('nav-search').addEventListener('click', function(e) {
-        e.preventDefault(); // 阻止 <a> 標籤的預設跳轉
-        showPage('search');
-    });
+        // 2. 綁定導覽列點擊事件，徹底阻止預設跳轉
+        const navSearch = document.getElementById('nav-search');
+        const navOverview = document.getElementById('nav-overview');
 
-    document.getElementById('nav-overview').addEventListener('click', function(e) {
-        e.preventDefault(); // 阻止 <a> 標籤的預設跳轉
-        showPage('overview');
-    });
-};
+        if (navSearch) {
+            navSearch.addEventListener('click', function(e) {
+                e.preventDefault();
+                showPage('search');
+            });
+        }
+
+        if (navOverview) {
+            navOverview.addEventListener('click', function(e) {
+                e.preventDefault();
+                showPage('overview');
+            });
+        }
+    };
 
     function showPage(p) {
         const pages = ['search', 'overview'];
