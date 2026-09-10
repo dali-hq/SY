@@ -44,21 +44,24 @@
             display: flex; 
             flex-wrap: wrap; 
             justify-content: center; 
-            gap: 8px; /* 增加按鈕間距 */
+            gap: 10px; /* 增加按鈕間距 */
         }
         .nav-link a { 
-            background-color: #FF60AF; /* 改為 #FF60AF 底色 */
-            color: #000000 !important; /* 改為黑色字體 */
+            background-color: #CAFFFF; /* 改為淡青色底色 */
+            color: #000000 !important; /* 黑色字體 */
             text-decoration: none; 
             font-weight: bold; 
             cursor: pointer; 
-            padding: 6px 14px; /* 加上一點內距讓它看起來像質感按鈕 */
-            border-radius: 20px; /* 圓角膠囊外觀 */
+            padding: 4px 8px; /* 讓框框只比字大一點點 */
+            border-radius: 2px; /* 圓角改為 2 */
+            border: 1px solid #a8e6e6; /* 加一點極淡的邊框讓框體更立體 */
             white-space: nowrap; 
             font-size: 16px; 
             transition: background 0.2s;
         }
-        .nav-link a:hover { background-color: #ff3b99; /* 滑鼠懸停時稍微加深 */ }
+        .nav-link a:hover {
+            background-color: #b0f5f5; /* 滑鼠懸停時稍微深一點 */
+        }
         .nav-duty { color: #2c3e50 !important; }
         .nav-duty span { color: #27ae60 !important; }
     
