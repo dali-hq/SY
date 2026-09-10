@@ -290,7 +290,7 @@
         const offListEl = document.getElementById('off-list');
         if (!offListEl) return;
         if (typeof LEAVE_DATA === 'undefined') {
-            offListEl.innerHTML = "今日無人休假";
+            offListEl.innerHTML = "尚在建構";
             return;
         }
         
@@ -301,7 +301,7 @@
             list.map(e => {
                 const sitePrefix = e.site ? `(${e.site}) ` : '';
                 return `${sitePrefix}${e.id} ${e.name} (${e.start.slice(5)}~${e.end.slice(5)})`;
-            }).join('<br>') : "今日無人休假";
+            }).join('<br>') : "尚在建構";
     }
 </script>
 
