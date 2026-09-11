@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>員工編號與門別查詢</title>
+    <style>
+        body { font-family: sans-serif; margin: 30px; }
+        .box { margin-bottom: 20px; }
+        select { padding: 5px; font-size: 16px; }
+        table { border-collapse: collapse; width: 50%; margin-top: 10px; }
+        th, td { border: 1px solid #ccc; padding: 8px 12px; text-align: left; }
+        th { background-color: #f4f4f4; }
+    </style>
+</head>
+<body>
+
+    <h2>員工門別查詢系統</h2>
+
+    <div class="box">
+        <label for="doorSelect"><strong>選擇門別：</strong></label>
+        <select id="doorSelect" onchange="filterEmployees()">
+            <option value="">-- 請選擇門別 --</option>
+        </select>
+    </div>
+
+    <table id="empTable">
+        <thead>
+            <tr>
+                <th>員編</th>
+                <th>姓名</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td colspan="2">請先選擇門別</td></tr>
+        </tbody>
+    </table>
+
+    <script>
+        // 【請將這裡換成您剛剛部署好的 Apps Script 網址】
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwlRsQsfrj6QR5cFWtAEQa70ewFTZPkuWBDHbF7KMb182ORnUBL8Dn1mjWd_bsnTkPDfg/exec";
+
+        let allData = [];
+
+        // 頁面載入時抓取資料
+        fetch(WEB_APP_URL)
+            .then(response => response.json())
+            .then(data => {
+                allData = data;
+                initDoorDropdown(data);
+            })
+            .catch(error => console.error("讀取資料失敗:", error));
+
+        // 初始化門別下拉選單（不重複且排序）
+        function initDoorDropdown(data) {
+            const doors = [...new Set(data.map(item => item.door).filter(d => d !== ""))];
+            doors.sort(); // 排序門別
+
+            const select = document.getElementById("doorSelect");
+            doors.forEach(door => {
+                const option = document.createElement("option");
+                option.value = door;
+                option.textContent = door;
+                select.appendChild(option);
+            });
+        }
+
+        // 根據選取的門別過濾員編與姓名（不重複且排序）
+        function filterEmployees() {
+            const selectedDoor = document.getElementById("doorSelect").value;
+            const tbody = document.querySelector("#empTable tbody");
+            tbody.innerHTML = "";
+
+            if (!selectedDoor) {
+                tbody.innerHTML = `<tr><td colspan="2">請先選擇門別</td></tr>`;
+                return;
+            }
+
+            // 過濾出符合門別的資料
+            const filtered = allData.filter(item => item.door === selectedDoor);
+
+            // 用物件把重複的人過濾掉（以 id 為 key）
+            const uniqueMap = new Map();
+            filtered.forEach(item => {
+                if (!uniqueMap.has(item.id)) {
+                    uniqueMap.set(item.id, item.name);
+                }
+            });
+
+            // 轉成陣列並依員編排序
+            const sortedEmployees = Array.from(uniqueMap.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+
+            if (sortedEmployees.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="2">此門別無人員資料</td></tr>`;
+                return;
+            }
+
+            // 渲染到表格
+            sortedEmployees.forEach(([id, name]) => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `<td>${id}</td><td>${name}</td>`;
+                tbody.appendChild(tr);
+            });
+        }
+    </script>
+
+</body>
+</html>
