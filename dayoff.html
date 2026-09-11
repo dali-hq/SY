@@ -66,7 +66,7 @@
 
         // 根據選取的門別過濾員編與姓名（不重複且排序）
         function filterEmployees() {
-            const selectedDoor = document.getElementById("doorSelect").value;
+            const selectedDoor = document.getElementById("doorSelect").value.trim();
             const tbody = document.querySelector("#empTable tbody");
             tbody.innerHTML = "";
 
@@ -75,26 +75,23 @@
                 return;
             }
 
-            // 過濾出符合門別的資料
-            const filtered = allData.filter(item => item.door === selectedDoor);
+            const filtered = allData.filter(item => String(item.door).trim() === selectedDoor);
 
-            // 用物件把重複的人過濾掉（以 id 為 key）
             const uniqueMap = new Map();
             filtered.forEach(item => {
-                if (!uniqueMap.has(item.id)) {
-                    uniqueMap.set(item.id, item.name);
+                if (item.id !== undefined && item.id !== null && String(item.id).trim() !== "") {
+                    uniqueMap.set(String(item.id).trim(), String(item.name).trim());
                 }
             });
 
-            // 轉成陣列並依員編排序
-            const sortedEmployees = Array.from(uniqueMap.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+            // 強制轉成字串再做排序
+            const sortedEmployees = Array.from(uniqueMap.entries()).sort((a, b) => String(a[0]).localeCompare(String(b[0])));
 
             if (sortedEmployees.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="2">此門別無人員資料</td></tr>`;
                 return;
             }
 
-            // 渲染到表格
             sortedEmployees.forEach(([id, name]) => {
                 const tr = document.createElement("tr");
                 tr.innerHTML = `<td>${id}</td><td>${name}</td>`;
