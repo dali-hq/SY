@@ -2,72 +2,139 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>員工編號與門別查詢 / 請假系統</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>實毅-員工請假登錄</title>
     <style>
-        body { font-family: sans-serif; margin: 30px; }
-        .box { margin-bottom: 20px; }
-        select, input { padding: 5px; font-size: 16px; }
-        table { border-collapse: collapse; width: 50%; margin-top: 10px; }
-        th, td { border: 1px solid #ccc; padding: 8px 12px; text-align: left; }
-        th { background-color: #f4f4f4; }
-        .form-section { margin-top: 40px; padding: 20px; border: 1px solid #ddd; width: 50%; background: #f9f9f9; }
-        .form-group { margin-bottom: 12px; }
-        .form-group label { display: inline-block; width: 100px; font-weight: bold; }
+        :root {
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #334155;
+            --border-color: #cbd5e1;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            padding: 30px;
+        }
+
+        h2 {
+            color: #1e293b;
+            margin-top: 0;
+            margin-bottom: 24px;
+            text-align: center;
+            font-size: 22px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px 12px;
+            font-size: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            box-sizing: border-box;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        input[readonly] {
+            background-color: #f1f5f9;
+            color: #64748b;
+        }
+
+        .btn-submit {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            background-color: var(--primary-hover);
+        }
     </style>
 </head>
 <body>
 
-    <h2>員工門別查詢系統</h2>
+    <div class="container">
+        <div class="card">
+            <h2>實毅 - 員工請假登錄</h2>
+            <form id="leaveForm" onsubmit="submitLeave(event)">
+                
+                <div class="form-group">
+                    <label for="leaveId">員編</label>
+                    <input type="text" id="leaveId" required placeholder="請輸入員編" oninput="autoFillName()">
+                </div>
 
-    <div class="box">
-        <label for="doorSelect"><strong>選擇門別：</strong></label>
-        <select id="doorSelect" onchange="filterEmployees()">
-            <option value="">-- 請選擇門別 --</option>
-        </select>
-    </div>
+                <div class="form-group">
+                    <label for="leaveName">姓名 (系統帶入)</label>
+                    <input type="text" id="leaveName" required placeholder="輸入員編後自動顯示" readonly>
+                </div>
 
-    <table id="empTable">
-        <thead>
-            <tr>
-                <th>員編</th>
-                <th>姓名</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr><td colspan="2">請先選擇門別</td></tr>
-        </tbody>
-    </table>
+                <div class="form-group">
+                    <label for="leaveSite">工地 (系統帶入或手KEY)</label>
+                    <input type="text" id="leaveSite" required placeholder="請輸入或帶入工地/門別">
+                </div>
 
-    <!-- 請假填寫表單 -->
-    <div class="form-section">
-        <h3>請假登記表</h3>
-        <form id="leaveForm" onsubmit="submitLeave(event)">
-            <div class="form-group">
-                <label for="leaveSite">工地(門別):</label>
-                <input type="text" id="leaveSite" required placeholder="系統自動帶入或手動輸入">
-            </div>
-            <div class="form-group">
-                <label for="leaveId">員編:</label>
-                <input type="text" id="leaveId" required placeholder="請輸入員編" oninput="autoFillName()">
-            </div>
-            <div class="form-group">
-                <label for="leaveName">姓名:</label>
-                <input type="text" id="leaveName" required placeholder="依員編自動帶入" readonly style="background-color: #eee;">
-            </div>
-            <div class="form-group">
-                <label for="leaveStart">起始日期:</label>
-                <input type="date" id="leaveStart" required>
-            </div>
-            <div class="form-group">
-                <label for="leaveEnd">結束日期:</label>
-                <input type="date" id="leaveEnd" required>
-            </div>
-            <div class="form-group">
-                <label for="leaveSubmitter">填寫人:</label>
-                <input type="text" id="leaveSubmitter" required placeholder="請輸入您的名字">
-            </div>
-            <button type="submit" style="padding: 8px 16px; font-size: 16px; background-color: #4CAF50; color: white; border: none; cursor: pointer;">送出請假</button>
-        </form>
+                <div class="form-group">
+                    <label for="leaveStart">起始日期</label>
+                    <input type="date" id="leaveStart" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="leaveEnd">結束日期</label>
+                    <input type="date" id="leaveEnd" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="leaveSubmitter">填寫人 (必填)</label>
+                    <input type="text" id="leaveSubmitter" required placeholder="請輸入您的名字">
+                </div>
+
+                <button type="submit" class="btn-submit">確認送出請假</button>
+            </form>
+        </div>
     </div>
 
     <script>
@@ -75,90 +142,51 @@
 
         let allData = [];
 
-        // 頁面載入時抓取資料
+        // 頁面載入時自動抓取員工資料（供背景比對姓名用）
         fetch(WEB_APP_URL)
             .then(response => response.json())
             .then(data => {
                 allData = data;
-                initDoorDropdown(data);
             })
-            .catch(error => console.error("讀取資料失敗:", error));
+            .catch(error => console.error("讀取員工資料失敗:", error));
 
-        // 初始化門別下拉選單
-        function initDoorDropdown(data) {
-            const doors = [...new Set(data.map(item => String(item.door).trim()).filter(d => d !== "" && d !== "undefined"))];
-            doors.sort();
+        // 設定日期預設值為今年（2026）的今天
+        window.addEventListener('DOMContentLoaded', () => {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('leaveStart').value = today;
+            document.getElementById('leaveEnd').value = today;
+        });
 
-            const select = document.getElementById("doorSelect");
-            doors.forEach(door => {
-                const option = document.createElement("option");
-                option.value = door;
-                option.textContent = door;
-                select.appendChild(option);
-            });
-        }
-
-        // 根據選取的門別過濾員編與姓名
-        function filterEmployees() {
-            const selectedDoor = document.getElementById("doorSelect").value.trim();
-            const tbody = document.querySelector("#empTable tbody");
-            tbody.innerHTML = "";
-
-            // 同步將選取的門別帶入請假表單的工地欄位
-            if (selectedDoor) {
-                document.getElementById("leaveSite").value = selectedDoor;
-            }
-
-            if (!selectedDoor) {
-                tbody.innerHTML = `<tr><td colspan="2">請先選擇門別</td></tr>`;
-                return;
-            }
-
-            const filtered = allData.filter(item => String(item.door).trim() === selectedDoor);
-
-            const uniqueMap = new Map();
-            filtered.forEach(item => {
-                if (item.id !== undefined && item.id !== null && String(item.id).trim() !== "") {
-                    uniqueMap.set(String(item.id).trim(), String(item.name).trim());
-                }
-            });
-
-            const sortedEmployees = Array.from(uniqueMap.entries()).sort((a, b) => String(a[0]).localeCompare(String(b[0])));
-
-            if (sortedEmployees.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="2">此門別無人員資料</td></tr>`;
-                return;
-            }
-
-            sortedEmployees.forEach(([id, name]) => {
-                const tr = document.createElement("tr");
-                tr.innerHTML = `<td>${id}</td><td>${name}</td>`;
-                tbody.appendChild(tr);
-            });
-        }
-
-        // 依據輸入的員編自動帶出姓名
+        // 依據輸入的員編自動帶出姓名（順便嘗試帶出對應的工地/門別）
         function autoFillName() {
             const inputId = document.getElementById("leaveId").value.trim();
             const nameField = document.getElementById("leaveName");
+            const siteField = document.getElementById("leaveSite");
 
             if (!inputId) {
                 nameField.value = "";
                 return;
             }
 
-            // 從全域資料中尋找符合該員編的人
             const matched = allData.find(item => String(item.id).trim() === inputId);
             if (matched) {
                 nameField.value = matched.name;
+                // 如果抓得到對應門別，順便填入工地欄位（若不需要可手KEY覆蓋）
+                if (matched.door) {
+                    siteField.value = matched.door;
+                }
             } else {
-                nameField.value = "查無此員編（可手動或確認）";
+                nameField.value = "查無此員編";
             }
         }
 
         // 送出請假表單到 GAS
         function submitLeave(event) {
             event.preventDefault();
+
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            submitBtn.textContent = "傳送中...";
+            submitBtn.disabled = true;
 
             const payload = {
                 site: document.getElementById("leaveSite").value,
@@ -178,6 +206,10 @@
                 if (res.status === "success") {
                     alert("請假送出成功！");
                     document.getElementById("leaveForm").reset();
+                    // 重新把日期重設回今天
+                    const today = new Date().toISOString().split('T')[0];
+                    document.getElementById('leaveStart').value = today;
+                    document.getElementById('leaveEnd').value = today;
                 } else {
                     alert("送出失敗：" + res.message);
                 }
@@ -185,6 +217,10 @@
             .catch(err => {
                 console.error("Error:", err);
                 alert("連線發生錯誤，請稍後再試。");
+            })
+            .finally(() => {
+                submitBtn.textContent = "確認送出請假";
+                submitBtn.disabled = false;
             });
         }
     </script>
