@@ -143,19 +143,13 @@
         </div>
     </div>
 
+    <!-- 1. 引入本地員工資料檔 -->
+    <script src="employees.js"></script>
+
+    <!-- 2. 主程式邏輯 -->
     <script>
+        // 負責接收 POST 寫入 Google Sheet 的網址
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwlRsQsfrj6QR5cFWtAEQa70ewFTZPkuWBDHbF7KMb182ORnUBL8Dn1mjWd_bsnTkPDfg/exec";
-
-        let allData = [];
-
-        // 頁面載入時抓取員工資料
-        fetch(WEB_APP_URL)
-            .then(response => response.json())
-            .then(data => {
-                allData = data;
-                console.log("成功載入員工資料庫，筆數：", data.length);
-            })
-            .catch(error => console.error("讀取員工資料失敗:", error));
 
         // 設定日期預設值為今天
         window.addEventListener('DOMContentLoaded', () => {
@@ -164,7 +158,7 @@
             document.getElementById('leaveEnd').value = today;
         });
 
-        // 依據輸入的員編自動帶出姓名與工地
+        // 依據輸入的員編快速從本地 EMPLOYEE_DB 比對並帶出姓名與工地
         function autoFillNameAndSite() {
             const inputId = document.getElementById("leaveId").value.trim();
             const nameField = document.getElementById("leaveName");
@@ -176,8 +170,7 @@
                 return;
             }
 
-            // 強制轉字串比對，避免型態不合
-            const matched = allData.find(item => String(item.id).trim() === String(inputId).trim());
+            const matched = EMPLOYEE_DB.find(item => String(item.id).trim() === String(inputId).trim());
             
             if (matched) {
                 nameField.value = matched.name || "";
@@ -188,7 +181,7 @@
             }
         }
 
-        // 送出請假表單
+        // 送出請假表單至 GAS
         function submitLeave(event) {
             event.preventDefault();
 
