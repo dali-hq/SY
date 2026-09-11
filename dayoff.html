@@ -102,31 +102,37 @@
             <h2>實毅 - 員工請假登錄</h2>
             <form id="leaveForm" onsubmit="submitLeave(event)">
                 
+                <!-- B 員編 -->
                 <div class="form-group">
-                    <label for="leaveId">員編</label>
-                    <input type="text" id="leaveId" required placeholder="請輸入員編" oninput="autoFillName()">
+                    <label for="leaveId">員編 (數字)</label>
+                    <input type="text" id="leaveId" required placeholder="請輸入員編" oninput="autoFillNameAndSite()">
                 </div>
 
+                <!-- C 姓名 -->
                 <div class="form-group">
-                    <label for="leaveName">姓名 (系統帶入)</label>
+                    <label for="leaveName">姓名 (依員編顯示對應姓名)</label>
                     <input type="text" id="leaveName" required placeholder="輸入員編後自動顯示" readonly>
                 </div>
 
+                <!-- A 工地(門別) -->
                 <div class="form-group">
-                    <label for="leaveSite">工地 (系統帶入或手KEY)</label>
-                    <input type="text" id="leaveSite" required placeholder="請輸入或帶入工地/門別">
+                    <label for="leaveSite">工地 (系統顯示或手KEY)</label>
+                    <input type="text" id="leaveSite" required placeholder="系統自動帶入或手動輸入">
                 </div>
 
+                <!-- D 起始 -->
                 <div class="form-group">
                     <label for="leaveStart">起始日期</label>
                     <input type="date" id="leaveStart" required>
                 </div>
 
+                <!-- E 結束 -->
                 <div class="form-group">
                     <label for="leaveEnd">結束日期</label>
                     <input type="date" id="leaveEnd" required>
                 </div>
 
+                <!-- F 填寫人 -->
                 <div class="form-group">
                     <label for="leaveSubmitter">填寫人 (必填)</label>
                     <input type="text" id="leaveSubmitter" required placeholder="請輸入您的名字">
@@ -142,45 +148,47 @@
 
         let allData = [];
 
-        // 頁面載入時自動抓取員工資料（供背景比對姓名用）
+        // 頁面載入時抓取員工資料
         fetch(WEB_APP_URL)
             .then(response => response.json())
             .then(data => {
                 allData = data;
+                console.log("成功載入員工資料庫，筆數：", data.length);
             })
             .catch(error => console.error("讀取員工資料失敗:", error));
 
-        // 設定日期預設值為今年（2026）的今天
+        // 設定日期預設值為今天
         window.addEventListener('DOMContentLoaded', () => {
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('leaveStart').value = today;
             document.getElementById('leaveEnd').value = today;
         });
 
-        // 依據輸入的員編自動帶出姓名（順便嘗試帶出對應的工地/門別）
-        function autoFillName() {
+        // 依據輸入的員編自動帶出姓名與工地
+        function autoFillNameAndSite() {
             const inputId = document.getElementById("leaveId").value.trim();
             const nameField = document.getElementById("leaveName");
             const siteField = document.getElementById("leaveSite");
 
             if (!inputId) {
                 nameField.value = "";
+                siteField.value = "";
                 return;
             }
 
-            const matched = allData.find(item => String(item.id).trim() === inputId);
+            // 強制轉字串比對，避免型態不合
+            const matched = allData.find(item => String(item.id).trim() === String(inputId).trim());
+            
             if (matched) {
-                nameField.value = matched.name;
-                // 如果抓得到對應門別，順便填入工地欄位（若不需要可手KEY覆蓋）
-                if (matched.door) {
-                    siteField.value = matched.door;
-                }
+                nameField.value = matched.name || "";
+                siteField.value = matched.door || "";
             } else {
                 nameField.value = "查無此員編";
+                siteField.value = "";
             }
         }
 
-        // 送出請假表單到 GAS
+        // 送出請假表單
         function submitLeave(event) {
             event.preventDefault();
 
@@ -206,7 +214,6 @@
                 if (res.status === "success") {
                     alert("請假送出成功！");
                     document.getElementById("leaveForm").reset();
-                    // 重新把日期重設回今天
                     const today = new Date().toISOString().split('T')[0];
                     document.getElementById('leaveStart').value = today;
                     document.getElementById('leaveEnd').value = today;
