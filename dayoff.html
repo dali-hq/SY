@@ -1,9 +1,19 @@
+
+
+	
+	
+	
+	
+	
+	
+	
+
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>實毅-員工請假登錄</title>
+    <title>實毅 - 員工請假登錄</title>
     <style>
         :root {
             --primary-color: #2563eb;
@@ -26,7 +36,7 @@
 
         .container {
             width: 100%;
-            max-width: 500px;
+            max-width: 650px;
         }
 
         .card {
@@ -93,6 +103,30 @@
         .btn-submit:hover {
             background-color: var(--primary-hover);
         }
+
+        /* 第一行三個欄位 */
+        .form-row-top {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 18px;
+        }
+
+        .form-row-top .form-group {
+            width: calc((100% - 30px) / 3);
+            margin-bottom: 0;
+        }
+
+        /* 第二行三個欄位 */
+        .form-row-bottom {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 18px;
+        }
+
+        .form-row-bottom .form-group {
+            width: calc((100% - 30px) / 3);
+            margin-bottom: 0;
+        }
     </style>
 </head>
 <body>
@@ -102,40 +136,46 @@
             <h2>實毅 - 員工請假登錄</h2>
             <form id="leaveForm" onsubmit="submitLeave(event)">
                 
-                <!-- B 員編 -->
-                <div class="form-group">
-                    <label for="leaveId">工號</label>
-                    <input type="text" id="leaveId" oninput="autoFillNameAndSite()">
+                <!-- 第一行：工號、姓名、所屬工地 -->
+                <div class="form-row-top">
+                    <!-- B 員編 -->
+                    <div class="form-group">
+                        <label for="leaveId">工號</label>
+                        <input type="text" id="leaveId" oninput="autoFillNameAndSite()" maxlength="5">
+                    </div>
+
+                    <!-- C 姓名 -->
+                    <div class="form-group">
+                        <label for="leaveName">姓名</label>
+                        <input type="text" id="leaveName" required placeholder="系統代入" readonly maxlength="4">
+                    </div>
+
+                    <!-- A 工地 (門別) -->
+                    <div class="form-group">
+                        <label for="leaveSite">所屬工地</label>
+                        <input type="text" id="leaveSite" required placeholder="系統帶入或手動輸入" maxlength="7">
+                    </div>
                 </div>
 
-                <!-- C 姓名 -->
-                <div class="form-group">
-                    <label for="leaveName">姓名</label>
-                    <input type="text" id="leaveName" required placeholder="系統代入" readonly>
-                </div>
+                <!-- 第二行：起始日期、結束日期、填寫人 -->
+                <div class="form-row-bottom">
+                    <!-- D 起始 -->
+                    <div class="form-group">
+                        <label for="leaveStart">起始日期</label>
+                        <input type="date" id="leaveStart" required>
+                    </div>
 
-                <!-- A 工地(門別) -->
-                <div class="form-group">
-                    <label for="leaveSite">所屬工地</label>
-                    <input type="text" id="leaveSite" required placeholder="系統帶入或手動輸入">
-                </div>
+                    <!-- E 結束 -->
+                    <div class="form-group">
+                        <label for="leaveEnd">結束日期</label>
+                        <input type="date" id="leaveEnd" required>
+                    </div>
 
-                <!-- D 起始 -->
-                <div class="form-group">
-                    <label for="leaveStart">起始日期</label>
-                    <input type="date" id="leaveStart" required>
-                </div>
-
-                <!-- E 結束 -->
-                <div class="form-group">
-                    <label for="leaveEnd">結束日期</label>
-                    <input type="date" id="leaveEnd" required>
-                </div>
-
-                <!-- F 填寫人 -->
-                <div class="form-group">
-                    <label for="leaveSubmitter">填寫人</label>
-                    <input type="text" id="leaveSubmitter" required placeholder="請輸入您的名字">
+                    <!-- F 填寫人 -->
+                    <div class="form-group">
+                        <label for="leaveSubmitter">填寫人</label>
+                        <input type="text" id="leaveSubmitter" required placeholder="請輸入您的名字">
+                    </div>
                 </div>
 
                 <button type="submit" class="btn-submit">確認送出請假</button>
