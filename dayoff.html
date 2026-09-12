@@ -1,11 +1,9 @@
-
-
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>實毅 - 員工請假登錄</title>
+    <title>實毅-員工請假登錄</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&display=swap" rel="stylesheet">
@@ -30,8 +28,10 @@
         .modal-overlay.active { display: flex; }
         .modal { background: white; border-radius: 12px; padding: 30px; max-width: 400px; width: 90%; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2); }
         .modal h3 { margin-top: 0; margin-bottom: 20px; text-align: center; font-size: 20px; color: #1e293b; }
-        .modal-info { background: #f1f5f9; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 15px; line-height: 1.8; text-align: center; }
-        .modal-info div { margin-bottom: 5px; }
+        .modal-info { background: #f1f5f9; padding: 20px; border-radius: 8px; margin-bottom: 20px; font-size: 15px; line-height: 2; }
+        .modal-info-row { margin-bottom: 10px; }
+        .modal-info-row:last-child { margin-bottom: 0; }
+        .modal-info-row.inline { display: flex; justify-content: center; gap: 30px; }
         .modal-buttons { display: flex; gap: 15px; justify-content: center; }
         .modal-btn { padding: 10px 30px; font-size: 16px; font-weight: 600; border: none; border-radius: 6px; cursor: pointer; font-family: "Noto Serif TC", "Source Han Serif TC", "思源宋體", serif; transition: all 0.2s; }
         .modal-btn-confirm { background: var(--primary-color); color: white; }
@@ -55,7 +55,7 @@
                     <div class="form-group"><label for="leaveEnd">結束日期</label><input type="date" id="leaveEnd" required></div>
                     <div class="form-group"><label for="leaveSubmitter">填寫人</label><input type="text" id="leaveSubmitter" required placeholder="請輸入您的名字"></div>
                 </div>
-                <button type="submit" class="btn-submit">送出</button>
+                <button type="submit" class="btn-submit">確認送出</button>
             </form>
         </div>
     </div>
@@ -74,7 +74,7 @@
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwlRsQsfrj6QR5cFWtAEQa70ewFTZPkuWBDHbF7KMb182ORnUBL8Dn1mjWd_bsnTkPDfg/exec";
         window.addEventListener('DOMContentLoaded', () => { const today = new Date().toISOString().split('T')[0]; document.getElementById('leaveStart').value = today; document.getElementById('leaveEnd').value = today; });
         function autoFillNameAndSite() { const inputId = document.getElementById("leaveId").value.trim(); const nameField = document.getElementById("leaveName"); const siteField = document.getElementById("leaveSite"); if (!inputId) { nameField.value = ""; siteField.value = ""; return; } const matched = EMPLOYEE_DB.find(item => String(item.id).trim() === String(inputId).trim()); if (matched) { nameField.value = matched.name || ""; siteField.value = matched.door || ""; } else { nameField.value = "查無此員編"; siteField.value = ""; } }
-        function showConfirm(event) { event.preventDefault(); const info = `<div><strong>工號：</strong>${document.getElementById("leaveId").value}</div><div><strong>姓名：</strong>${document.getElementById("leaveName").value}</div><div><strong>所屬工地：</strong>${document.getElementById("leaveSite").value}</div><div><strong>開始時間：</strong>${document.getElementById("leaveStart").value}</div><div><strong>結束時間：</strong>${document.getElementById("leaveEnd").value}</div>`; document.getElementById("modalInfo").innerHTML = info; document.getElementById("confirmModal").classList.add("active"); document.getElementById("confirmBtn").focus(); }
+        function showConfirm(event) { event.preventDefault(); const id = document.getElementById("leaveId").value; const name = document.getElementById("leaveName").value; const site = document.getElementById("leaveSite").value; const start = document.getElementById("leaveStart").value; const end = document.getElementById("leaveEnd").value; const info = `<div class="modal-info-row inline"><span><strong>工號：</strong>${id}</span><span><strong>姓名：</strong>${name}</span></div><div class="modal-info-row"><strong>所屬工地：</strong>${site}</div><div class="modal-info-row"><strong>起訖時間：</strong>${start} 至 ${end}</div>`; document.getElementById("modalInfo").innerHTML = info; document.getElementById("confirmModal").classList.add("active"); document.getElementById("confirmBtn").focus(); }
         function closeModal() { document.getElementById("confirmModal").classList.remove("active"); }
         function confirmSubmit() { closeModal(); const submitBtn = document.querySelector('.btn-submit'); submitBtn.textContent = "傳送中..."; submitBtn.disabled = true; const payload = { site: document.getElementById("leaveSite").value, id: document.getElementById("leaveId").value, name: document.getElementById("leaveName").value, startDate: document.getElementById("leaveStart").value, endDate: document.getElementById("leaveEnd").value, submitter: document.getElementById("leaveSubmitter").value }; fetch(WEB_APP_URL, { method: "POST", body: JSON.stringify(payload) }).then(res => res.json()).then(res => { if (res.status === "success") { alert("請假送出成功！"); document.getElementById("leaveForm").reset(); const today = new Date().toISOString().split('T')[0]; document.getElementById('leaveStart').value = today; document.getElementById('leaveEnd').value = today; } else { alert("送出失敗：" + res.message); } }).catch(err => { console.error("Error:", err); alert("連線發生錯誤，請稍後再試。"); }).finally(() => { submitBtn.textContent = "確認送出請假"; submitBtn.disabled = false; }); }
         document.getElementById('confirmModal').addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeModal(); } });
