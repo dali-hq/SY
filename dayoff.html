@@ -1,269 +1,56 @@
-
-
-	
-	
-	
-	
-	
-	
-	
-
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>實毅 - 員工請假登錄</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary-color: #2563eb;
-            --primary-hover: #1d4ed8;
-            --bg-color: #f8fafc;
-            --card-bg: #ffffff;
-            --text-color: #334155;
-            --border-color: #cbd5e1;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 40px 20px;
-            display: flex;
-            justify-content: center;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 650px;
-        }
-
-        .card {
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-            padding: 30px;
-        }
-
-        h2 {
-            color: #1e293b;
-            margin-top: 0;
-            margin-bottom: 24px;
-            text-align: center;
-            font-size: 22px;
-        }
-
-        .form-group {
-            margin-bottom: 18px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 6px;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        input {
-            width: 100%;
-            padding: 10px 12px;
-            font-size: 15px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            box-sizing: border-box;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-
-        input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-        }
-
-        input[readonly] {
-            background-color: #f1f5f9;
-            color: #64748b;
-        }
-
-        .btn-submit {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            font-size: 16px;
-            font-weight: 600;
-            border-radius: 6px;
-            cursor: pointer;
-            width: 100%;
-            transition: background-color 0.2s;
-            margin-top: 10px;
-        }
-
-        .btn-submit:hover {
-            background-color: var(--primary-hover);
-        }
-
-        /* 第一行三個欄位 */
-        .form-row-top {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 18px;
-        }
-
-        .form-row-top .form-group {
-            width: calc((100% - 30px) / 3);
-            margin-bottom: 0;
-        }
-
-        /* 第二行三個欄位 */
-        .form-row-bottom {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 18px;
-        }
-
-        .form-row-bottom .form-group {
-            width: calc((100% - 30px) / 3);
-            margin-bottom: 0;
-        }
+        :root { --primary-color: #2563eb; --primary-hover: #1d4ed8; --bg-color: #f8fafc; --card-bg: #ffffff; --text-color: #334155; --border-color: #cbd5e1; }
+        body { font-family: "Noto Serif TC", "Source Han Serif TC", "思源宋體", serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 40px 20px; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 650px; }
+        .card { background-color: var(--card-bg); border-radius: 12px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); padding: 30px; }
+        h2 { color: #1e293b; margin-top: 0; margin-bottom: 24px; text-align: center; font-size: 22px; }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; margin-bottom: 6px; font-weight: 700; font-size: 18px; text-align: center; }
+        input { width: 100%; padding: 10px 12px; font-size: 15px; border: 1px solid var(--border-color); border-radius: 6px; box-sizing: border-box; transition: border-color 0.2s, box-shadow 0.2s; font-family: "Noto Serif TC", "Source Han Serif TC", "思源宋體", serif; }
+        input:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+        input[readonly] { background-color: #f1f5f9; color: #64748b; }
+        .btn-submit { background-color: var(--primary-color); color: white; border: none; padding: 12px 20px; font-size: 16px; font-weight: 600; border-radius: 6px; cursor: pointer; width: 100%; transition: background-color 0.2s; margin-top: 10px; font-family: "Noto Serif TC", "Source Han Serif TC", "思源宋體", serif; }
+        .btn-submit:hover { background-color: var(--primary-hover); }
+        .form-row-top { display: flex; gap: 15px; margin-bottom: 18px; }
+        .form-row-top .form-group { width: calc((100% - 30px) / 3); margin-bottom: 0; }
+        .form-row-bottom { display: flex; gap: 15px; margin-bottom: 18px; }
+        .form-row-bottom .form-group { width: calc((100% - 30px) / 3); margin-bottom: 0; }
     </style>
 </head>
 <body>
-
     <div class="container">
         <div class="card">
             <h2>實毅 - 員工請假登錄</h2>
             <form id="leaveForm" onsubmit="submitLeave(event)">
-                
-                <!-- 第一行：工號、姓名、所屬工地 -->
                 <div class="form-row-top">
-                    <!-- B 員編 -->
-                    <div class="form-group">
-                        <label for="leaveId">工號</label>
-                        <input type="text" id="leaveId" oninput="autoFillNameAndSite()" maxlength="5">
-                    </div>
-
-                    <!-- C 姓名 -->
-                    <div class="form-group">
-                        <label for="leaveName">姓名</label>
-                        <input type="text" id="leaveName" required placeholder="系統代入" readonly maxlength="4">
-                    </div>
-
-                    <!-- A 工地 (門別) -->
-                    <div class="form-group">
-                        <label for="leaveSite">所屬工地</label>
-                        <input type="text" id="leaveSite" required placeholder="系統帶入或手動輸入" maxlength="7">
-                    </div>
+                    <div class="form-group"><label for="leaveId">工號</label><input type="text" id="leaveId" oninput="autoFillNameAndSite()" maxlength="5"></div>
+                    <div class="form-group"><label for="leaveName">姓名</label><input type="text" id="leaveName" required placeholder="系統代入" readonly maxlength="4"></div>
+                    <div class="form-group"><label for="leaveSite">所屬工地</label><input type="text" id="leaveSite" required placeholder="系統帶入或手動輸入" maxlength="7"></div>
                 </div>
-
-                <!-- 第二行：起始日期、結束日期、填寫人 -->
                 <div class="form-row-bottom">
-                    <!-- D 起始 -->
-                    <div class="form-group">
-                        <label for="leaveStart">起始日期</label>
-                        <input type="date" id="leaveStart" required>
-                    </div>
-
-                    <!-- E 結束 -->
-                    <div class="form-group">
-                        <label for="leaveEnd">結束日期</label>
-                        <input type="date" id="leaveEnd" required>
-                    </div>
-
-                    <!-- F 填寫人 -->
-                    <div class="form-group">
-                        <label for="leaveSubmitter">填寫人</label>
-                        <input type="text" id="leaveSubmitter" required placeholder="請輸入您的名字">
-                    </div>
+                    <div class="form-group"><label for="leaveStart">起始日期</label><input type="date" id="leaveStart" required></div>
+                    <div class="form-group"><label for="leaveEnd">結束日期</label><input type="date" id="leaveEnd" required></div>
+                    <div class="form-group"><label for="leaveSubmitter">填寫人</label><input type="text" id="leaveSubmitter" required placeholder="請輸入您的名字"></div>
                 </div>
-
-                <button type="submit" class="btn-submit">確認送出請假</button>
+                <button type="submit" class="btn-submit">確認送出</button>
             </form>
         </div>
     </div>
-
-    <!-- 1. 引入本地員工資料檔 -->
     <script src="employees.js"></script>
-
-    <!-- 2. 主程式邏輯 -->
     <script>
-        // 負責接收 POST 寫入 Google Sheet 的網址
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwlRsQsfrj6QR5cFWtAEQa70ewFTZPkuWBDHbF7KMb182ORnUBL8Dn1mjWd_bsnTkPDfg/exec";
-
-        // 設定日期預設值為今天
-        window.addEventListener('DOMContentLoaded', () => {
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('leaveStart').value = today;
-            document.getElementById('leaveEnd').value = today;
-        });
-
-        // 依據輸入的員編快速從本地 EMPLOYEE_DB 比對並帶出姓名與工地
-        function autoFillNameAndSite() {
-            const inputId = document.getElementById("leaveId").value.trim();
-            const nameField = document.getElementById("leaveName");
-            const siteField = document.getElementById("leaveSite");
-
-            if (!inputId) {
-                nameField.value = "";
-                siteField.value = "";
-                return;
-            }
-
-            const matched = EMPLOYEE_DB.find(item => String(item.id).trim() === String(inputId).trim());
-            
-            if (matched) {
-                nameField.value = matched.name || "";
-                siteField.value = matched.door || "";
-            } else {
-                nameField.value = "查無此員編";
-                siteField.value = "";
-            }
-        }
-
-        // 送出請假表單至 GAS
-        function submitLeave(event) {
-            event.preventDefault();
-
-            const submitBtn = event.target.querySelector('button[type="submit"]');
-            submitBtn.textContent = "傳送中...";
-            submitBtn.disabled = true;
-
-            const payload = {
-                site: document.getElementById("leaveSite").value,
-                id: document.getElementById("leaveId").value,
-                name: document.getElementById("leaveName").value,
-                startDate: document.getElementById("leaveStart").value,
-                endDate: document.getElementById("leaveEnd").value,
-                submitter: document.getElementById("leaveSubmitter").value
-            };
-
-            fetch(WEB_APP_URL, {
-                method: "POST",
-                body: JSON.stringify(payload)
-            })
-            .then(res => res.json())
-            .then(res => {
-                if (res.status === "success") {
-                    alert("請假送出成功！");
-                    document.getElementById("leaveForm").reset();
-                    const today = new Date().toISOString().split('T')[0];
-                    document.getElementById('leaveStart').value = today;
-                    document.getElementById('leaveEnd').value = today;
-                } else {
-                    alert("送出失敗：" + res.message);
-                }
-            })
-            .catch(err => {
-                console.error("Error:", err);
-                alert("連線發生錯誤，請稍後再試。");
-            })
-            .finally(() => {
-                submitBtn.textContent = "確認送出請假";
-                submitBtn.disabled = false;
-            });
-        }
+        window.addEventListener('DOMContentLoaded', () => { const today = new Date().toISOString().split('T')[0]; document.getElementById('leaveStart').value = today; document.getElementById('leaveEnd').value = today; });
+        function autoFillNameAndSite() { const inputId = document.getElementById("leaveId").value.trim(); const nameField = document.getElementById("leaveName"); const siteField = document.getElementById("leaveSite"); if (!inputId) { nameField.value = ""; siteField.value = ""; return; } const matched = EMPLOYEE_DB.find(item => String(item.id).trim() === String(inputId).trim()); if (matched) { nameField.value = matched.name || ""; siteField.value = matched.door || ""; } else { nameField.value = "查無此員編"; siteField.value = ""; } }
+        function submitLeave(event) { event.preventDefault(); const submitBtn = event.target.querySelector('button[type="submit"]'); submitBtn.textContent = "傳送中..."; submitBtn.disabled = true; const payload = { site: document.getElementById("leaveSite").value, id: document.getElementById("leaveId").value, name: document.getElementById("leaveName").value, startDate: document.getElementById("leaveStart").value, endDate: document.getElementById("leaveEnd").value, submitter: document.getElementById("leaveSubmitter").value }; fetch(WEB_APP_URL, { method: "POST", body: JSON.stringify(payload) }).then(res => res.json()).then(res => { if (res.status === "success") { alert("請假送出成功！"); document.getElementById("leaveForm").reset(); const today = new Date().toISOString().split('T')[0]; document.getElementById('leaveStart').value = today; document.getElementById('leaveEnd').value = today; } else { alert("送出失敗：" + res.message); } }).catch(err => { console.error("Error:", err); alert("連線發生錯誤，請稍後再試。"); }).finally(() => { submitBtn.textContent = "確認送出請假"; submitBtn.disabled = false; }); }
     </script>
-
 </body>
 </html>
