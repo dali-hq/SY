@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>📅 實毅 - 員工請假登錄</title>
+<title>實毅 - 員工請假登錄</title>
 <link rel="icon" href="calendar-date.ico" type="image/x-icon">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
@@ -39,8 +39,10 @@ input[readonly]{background-color:#f0fdf4;color:#065f46;border-color:#6ee7b7;font
 <body>
 <div class="container">
 <div class="card">
-<img src="calendar-date.ico" alt="" style="vertical-align: middle; width: 24px; height: 24px; margin-right: 8px;">
-<h2>實毅 - 員工請假登錄</h2>
+<h2 style="display: flex; align-items: center; gap: 8px;">
+  <img src="calendar-date.ico" alt="" style="width: 24px; height: 24px;">
+  實毅 - 員工請假登錄
+</h2>
 <form id="leaveForm" onsubmit="showConfirm(event)">
 <div class="form-row">
 <div class="form-group"><label>工號</label><input type="text" id="leaveId" oninput="autoFillNameAndSite()" maxlength="5"></div>
