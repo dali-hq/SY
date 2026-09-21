@@ -217,51 +217,52 @@
 
     // 今日休假查詢（依工地分組）
     function loadOffDuty() {
-        const offListEl = document.getElementById('off-list');
-        if (!offListEl) return;
-        
-        if (typeof DAYOFF === 'undefined') {
-            offListEl.innerHTML = "今日無人休假";
-            return;
-        }
-        
-        const now = new Date();
-        const minguoYear = now.getFullYear() - 1911;
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        const day = String(now.getDate()).padStart(2, '0');
-        const today = `${minguoYear}/${month}/${day}`;
-        
-        const list = DAYOFF.filter(d => today >= d.start && today <= d.end);
-        
-        if (list.length === 0) {
-            offListEl.innerHTML = "今日無人休假";
-            return;
-        }
-        
-        const grouped = list.reduce((acc, item) => {
-            const site = item.site || '其他工地';
-            if (!acc[site]) {
-                acc[site] = [];
-            }
-            acc[site].push(item);
-            return acc;
-        }, {});
-        
-        let html = '';
-        for (const site in grouped) {
-            html += `<div class="site-group">`;
-            html += `<div class="site-title">📍 ${site}</div>`;
-            
-            const workersHtml = grouped[site].map(e => {
-                return `&nbsp;&nbsp;• ${e.id} ${e.name} <span class="date-range">(${e.start.slice(5)}~${e.end.slice(5)})</span>`;
-            }).join('<br>');
-            
-            html += workersHtml;
-            html += `</div><br>`;
-        }
-        
-        offListEl.innerHTML = html;
+    const offListEl = document.getElementById('off-list');
+    if (!offListEl) return;
+    
+    if (typeof DAYOFF === 'undefined' || !Array.isArray(DAYOFF)) {
+        offListEl.innerHTML = "今日無人休假";
+        return;
     }
+    
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const today = `${year}/${month}/${day}`;
+    
+    const list = DAYOFF.filter(d => today >= d.start && today <= d.end);
+    
+    if (list.length === 0) {
+        offListEl.innerHTML = "今日無人休假";
+        return;
+    }
+    
+    const grouped = list.reduce((acc, item) => {
+        const site = item.site || '其他工地';
+        if (!acc[site]) acc[site] = [];
+        acc[site].push(item);
+        return acc;
+    }, {});
+    
+    let html = '';
+    for (const site in grouped) {
+        html += `<div class="site-group">`;
+        html += `<div class="site-title">📍 ${site}</div>`;
+        
+        const workersHtml = grouped[site].map(e => {
+            // ✅ 修正：使用 substring 和 indexOf 正確截取月/日
+            const startDisplay = e.start.substring(e.start.indexOf('/') + 1);
+            const endDisplay = e.end.substring(e.end.indexOf('/') + 1);
+            return `&nbsp;&nbsp;• ${e.id} ${e.name} <span class="date-range">(${startDisplay}~${endDisplay})</span>`;
+        }).join('<br>');
+        
+        html += workersHtml;
+        html += `</div><br>`;
+    }
+    
+    offListEl.innerHTML = html;
+}
 </script>
 
 </body>
