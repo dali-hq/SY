@@ -9,97 +9,322 @@
     <meta name="referrer" content="no-referrer">
     <link rel="icon" href="logo.png" type="image/png">
     <title>實毅營造員工</title>
+
     <style>
-    body { font-family: "Noto Serif TC", "Microsoft JhengHei", serif, sans-serif; text-align: center; background: #f5f7fa; padding: 15px; margin: 0; }
-    .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); display: block; width: 100%; max-width: 450px; box-sizing: border-box; margin: 10px auto; transition: max-width 0.3s; }
-    .card.wide { max-width: 1450px; }
-    .page-title { color: #2c3e50; display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 30px; margin: 0 0 20px 0; }
-    .page-title img { width: 38px; height: 38px; object-fit: contain; }
-    .search-section { max-width: 400px; margin: 0 auto; }
-    input { padding: 15px; border: 2px solid #9F0050; border-radius: 6px; font-family: "Noto Serif TC", serif; font-size: 18px; outline: none; width: 100%; box-sizing: border-box; margin-bottom: 10px; }
-    .btn-group { display: flex; gap: 10px; margin-bottom: 15px; }
-    .btn-search { flex: 2; padding: 15px 0; background-color: #FF359A; color: white; border: none; border-radius: 6px; font-family: "Noto Serif TC", serif; font-size: 18px; font-weight: bold; cursor: pointer; }
-    .btn-clear { flex: 1; padding: 15px 0; background-color: #95a5a6; color: white; border: none; border-radius: 6px; font-family: "Noto Serif TC", serif; font-size: 18px; font-weight: bold; cursor: pointer; }
-    .nav-link { margin-top: 25px; padding-top: 15px; border-top: 1px solid #eee; font-size: 22px; line-height: 2.5; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px; }
-    .nav-link a { background: none !important; border: none !important; padding: 0 !important; color: #444; text-decoration: none; font-weight: bold; cursor: pointer; white-space: nowrap; font-size: 22px; transition: color 0.2s; }
-    .nav-link a:hover { color: #222; font-weight: bold !important; text-decoration: underline; }
-    .nav-link span.divider { color: #bbb; font-weight: normal; font-size: 14px; }
-    .nav-duty { color: #2c3e50 !important; }
-    .nav-duty span { color: #27ae60 !important; }
-    
-    /* 修正：使用 grid 佈局 */
-    .result-container { 
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-        padding: 10px 0;
-        width: 100%;
-        margin: 0 auto;
-        justify-items: center; /* 新增：置中 grid 項目 */
-    }
-    
-    .emp-card { 
-        background: #fff; 
-        border: 1px solid #333; 
-        border-radius: 8px; 
-        padding: 8px; 
-        box-shadow: 0 1px 1px rgba(0,0,0,0.08); 
-        box-sizing: border-box; 
-        text-align: center; 
-        display: flex; 
-        flex-direction: column; 
-        justify-content: space-between; 
-        transition: transform 0.2s;
-        width: 100%; /* 新增：填滿 grid 格子 */
-        max-width: 220px; /* 新增：限制最大寬度，確保一致 */
-    }
-    
-    .emp-card:hover { transform: translateY(-2px); }
-    .emp-card .emp-name-tag { font-weight: bold; font-size: clamp(13px, 1.2vw, 20px); margin-bottom: 6px; color: #2c3e50; border-bottom: 2px solid #f0f0f0; padding-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    
-    /* 修正：照片寬度一致 */
-    .emp-card img { 
-        width: 100%; 
-        height: auto; 
-        aspect-ratio: 3 / 4; 
-        object-fit: cover; 
-        border-radius: 6px; 
-        border: 1px solid #eee; 
-        flex-grow: 1; 
-        display: block;
-    }
-    
-    .emp-card .emp-site-tag { font-size: 13px; color: #e67e22; margin-top: 6px; font-weight: bold; }
-    
-    /* PC 版：一排 8 個 */
-    @media (min-width: 1024px) {
-        .result-container { 
-            grid-template-columns: repeat(8, 1fr);
+        body {
+            font-family: "Noto Serif TC", "Microsoft JhengHei", serif, sans-serif;
+            text-align: center;
+            background: #f5f7fa;
+            padding: 15px;
+            margin: 0;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            display: block;
+            width: 100%;
+            max-width: 450px;
+            box-sizing: border-box;
+            margin: 10px auto;
+            transition: max-width 0.3s;
+        }
+
+        .card.wide {
+            max-width: 1450px;
+        }
+
+        .page-title {
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            font-size: 30px;
+            margin: 0 0 20px;
+        }
+
+        .page-title img {
+            width: 38px;
+            height: 38px;
+            object-fit: contain;
+        }
+
+        .search-section {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        input {
+            padding: 15px;
+            border: 2px solid #9F0050;
+            border-radius: 6px;
+            font-family: "Noto Serif TC", serif;
+            font-size: 18px;
+            outline: none;
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+
+        .btn-group {
+            display: flex;
             gap: 10px;
+            margin-bottom: 15px;
         }
-        .emp-card { 
-            padding: 6px;
-            max-width: none; /* PC 版取消最大寬度限制 */
+
+        .btn-search,
+        .btn-clear {
+            padding: 15px 0;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-family: "Noto Serif TC", serif;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
         }
-    }
-    
-    #off-duty-box { margin: 30px auto 0 auto; padding: 14px; background: #fff0f0; border-radius: 12px; border: 1px solid #ffcccc; text-align: left; font-size: 18px; max-width: 450px; }
-    @media (max-width: 600px) { .mobile-br { display: block; width: 100%; height: 0; } }
-    @media (min-width: 601px) { .mobile-br { display: none; } }
-    @media print {
-        @page { size: landscape; margin: 8mm; }
-        body { background: white !important; padding: 0 !important; }
-        .card, .card.wide { max-width: 100% !important; width: 100% !important; box-shadow: none !important; padding: 0 !important; margin: 0 !important; }
-        .search-section, .btn-group, .nav-link, #off-duty-box { display: none !important; }
-        .result-container { display: grid !important; grid-template-columns: repeat(8, minmax(0, 1fr)) !important; gap: 6px !important; width: 100% !important; }
-        .emp-card { width: 100% !important; padding: 4px !important; break-inside: avoid; page-break-inside: avoid; }
-        .emp-card .emp-name-tag { font-size: 13px !important; margin-bottom: 3px !important; padding-bottom: 2px !important; }
-        .emp-card .emp-site-tag { font-size: 11px !important; margin-top: 3px !important; }
-    }
-    .site-group { margin-bottom: 8px; }
-    .site-title { font-weight: bold; color: #333; margin-bottom: 2px; }
-    .date-range { color: #333; }
-</style>
+
+        .btn-search {
+            flex: 2;
+            background-color: #FF359A;
+        }
+
+        .btn-clear {
+            flex: 1;
+            background-color: #95a5a6;
+        }
+
+        .nav-link {
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+            font-size: 22px;
+            line-height: 2.5;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-link a {
+            background: none !important;
+            border: none !important;
+            padding: 0 !important;
+            color: #444;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+            white-space: nowrap;
+            font-size: 22px;
+            transition: color 0.2s;
+        }
+
+        .nav-link a:hover {
+            color: #222;
+            font-weight: bold !important;
+            text-decoration: underline;
+        }
+
+        .nav-link span.divider {
+            color: #bbb;
+            font-weight: normal;
+            font-size: 14px;
+        }
+
+        .nav-duty {
+            color: #2c3e50 !important;
+        }
+
+        .nav-duty span {
+            color: #27ae60 !important;
+        }
+
+        /* 手機／窄螢幕：每排 2 張員工卡 */
+        .result-container {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+            align-items: start;
+            padding: 10px 0;
+            width: 100%;
+            margin: 0 auto;
+            box-sizing: border-box;
+        }
+
+        /* 卡片寬度由 Grid 欄位統一決定，避免照片原始尺寸影響版面 */
+        .emp-card {
+            width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+            background: #fff;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 8px;
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            transition: transform 0.2s;
+        }
+
+        .emp-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .emp-card .emp-name-tag {
+            width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+            font-weight: bold;
+            font-size: clamp(13px, 1.2vw, 20px);
+            line-height: 1.35;
+            margin-bottom: 6px;
+            color: #2c3e50;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 4px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* 每張照片永遠填滿相同欄寬，並以 3:4 框裁切，原圖比例不影響格線 */
+        .emp-card img {
+            display: block;
+            width: 100%;
+            height: auto;
+            aspect-ratio: 3 / 4;
+            object-fit: cover;
+            object-position: center;
+            flex: none;
+            box-sizing: border-box;
+            border-radius: 6px;
+            border: 1px solid #eee;
+        }
+
+        /* 空白工地名稱也保留高度，讓卡片底部對齊 */
+        .emp-card .emp-site-tag {
+            min-height: 20px;
+            font-size: 13px;
+            line-height: 20px;
+            color: #e67e22;
+            margin-top: 6px;
+            font-weight: bold;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* 桌機：每排 8 張卡。minmax(0, 1fr) 可避免內容把某欄撐寬 */
+        @media (min-width: 1024px) {
+            .result-container {
+                grid-template-columns: repeat(8, minmax(0, 1fr));
+                gap: 10px;
+            }
+
+            .emp-card {
+                padding: 6px;
+            }
+        }
+
+        #off-duty-box {
+            margin: 30px auto 0;
+            padding: 14px;
+            background: #fff0f0;
+            border-radius: 12px;
+            border: 1px solid #ffcccc;
+            text-align: left;
+            font-size: 18px;
+            max-width: 450px;
+        }
+
+        @media (max-width: 600px) {
+            .mobile-br {
+                display: block;
+                width: 100%;
+                height: 0;
+            }
+        }
+
+        @media (min-width: 601px) {
+            .mobile-br {
+                display: none;
+            }
+        }
+
+        @media print {
+            @page {
+                size: landscape;
+                margin: 8mm;
+            }
+
+            body {
+                background: white !important;
+                padding: 0 !important;
+            }
+
+            .card,
+            .card.wide {
+                max-width: 100% !important;
+                width: 100% !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+            .search-section,
+            .btn-group,
+            .nav-link,
+            #off-duty-box {
+                display: none !important;
+            }
+
+            .result-container {
+                display: grid !important;
+                grid-template-columns: repeat(8, minmax(0, 1fr)) !important;
+                gap: 6px !important;
+                width: 100% !important;
+            }
+
+            .emp-card {
+                width: 100% !important;
+                padding: 4px !important;
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+
+            .emp-card .emp-name-tag {
+                font-size: 13px !important;
+                margin-bottom: 3px !important;
+                padding-bottom: 2px !important;
+            }
+
+            .emp-card .emp-site-tag {
+                font-size: 11px !important;
+                margin-top: 3px !important;
+                min-height: 16px !important;
+                line-height: 16px !important;
+            }
+        }
+
+        .site-group {
+            margin-bottom: 8px;
+        }
+
+        .site-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 2px;
+        }
+
+        .date-range {
+            color: #333;
+        }
+    </style>
 </head>
 <body>
 
@@ -127,12 +352,12 @@
         <div id="result-overview" class="result-container"></div>
     </div>
 
-<!-- 底部導覽 -->
-<div class="nav-link">
-    <a href="#" id="nav-search">查詢</a><span class="divider">●</span>
-    <a href="#" id="nav-overview">總覽</a><span class="divider">●</span>
-    <a href="duty.html" class="nav-duty">月曆</a>
-</div>
+    <!-- 底部導覽 -->
+    <div class="nav-link">
+        <a href="#" id="nav-search">查詢</a><span class="divider">●</span>
+        <a href="#" id="nav-overview">總覽</a><span class="divider">●</span>
+        <a href="duty.html" class="nav-duty">月曆</a>
+    </div>
 </div>
 
 <!-- 今日休假 -->
@@ -141,38 +366,34 @@
     <div id="off-list">讀取中...</div>
 </div>
 
-<!-- 💡 把資料檔移到這裡，確保 DOM 載入後才讀取 -->
+<!-- 資料檔 -->
 <script src="data.js"></script>
 <script src="dayoff.js"></script>
 
 <script>
     window.onload = function() {
-        // 1. 載入今日休假
         loadOffDuty();
 
-        // 2. 綁定導覽列點擊事件，徹底阻止預設跳轉
         const navSearch = document.getElementById('nav-search');
         const navOverview = document.getElementById('nav-overview');
 
         if (navSearch) {
             navSearch.addEventListener('click', function(e) {
                 e.preventDefault();
-                showPage('search', true); // 帶入 true 代表要記錄歷史
+                showPage('search', true);
             });
         }
 
         if (navOverview) {
             navOverview.addEventListener('click', function(e) {
                 e.preventDefault();
-                showPage('overview', true); // 帶入 true 代表要記錄歷史
+                showPage('overview', true);
             });
         }
 
-        // 3. 監聽瀏覽器的上一頁/下一頁 (返回鍵)
         window.addEventListener('popstate', function(event) {
-            // 如果歷史紀錄裡有記錄是哪一頁，就切過去；沒有預設回 overview
             const targetPage = event.state && event.state.page ? event.state.page : 'overview';
-            showPage(targetPage, false); // false 代表這是按返回觸發的，不用重複 pushState
+            showPage(targetPage, false);
         });
     };
 
@@ -182,7 +403,7 @@
             const el = document.getElementById('page-' + id);
             if (el) el.style.display = 'none';
         });
-        
+
         const card = document.getElementById('main-card');
         const targetPage = document.getElementById('page-' + p);
         if (targetPage) targetPage.style.display = 'block';
@@ -199,16 +420,15 @@
             }
         }
 
-        // 💡 如果是手動點擊切換，才寫入瀏覽器歷史，避免重複推入
         if (pushHistory) {
             history.pushState({ page: p }, '', '');
         }
     }
-    // 渲染員工卡片
+
     function renderCards(targetId, list) {
         const div = document.getElementById(targetId);
         if (!div) return;
-        
+
         if (typeof WORKER_DATA === 'undefined') {
             div.innerHTML = "<div style='width:100%; padding:20px; color:red;'>錯誤：找不到員工資料 (WORKER_DATA 未載入)</div>";
             return;
@@ -218,37 +438,37 @@
             div.innerHTML = "<div style='width:100%; padding:20px;'>查無相關資料</div>";
             return;
         }
-        
-        list.sort((a, b) => (parseInt(a.id.toString().replace(/\D/g,'')) || 0) - (parseInt(b.id.toString().replace(/\D/g,'')) || 0));
-        
+
+        list.sort((a, b) => (parseInt(a.id.toString().replace(/\D/g, ''), 10) || 0) - (parseInt(b.id.toString().replace(/\D/g, ''), 10) || 0));
+
         div.innerHTML = list.map(e => `
             <div class='emp-card'>
                 <div class='emp-name-tag'>${e.id} ${e.name}</div>
-                <img src='${e.photoUrl}' onerror="this.src='https://via.placeholder.com/150x200?text=No+Photo'">
-                <div class='emp-site-tag'>${e.site ? '📍 ' + e.site : ''}</div>
+                <img src='${e.photoUrl}' alt='${e.name}' onerror="this.src='https://via.placeholder.com/150x200?text=No+Photo'">
+                <div class='emp-site-tag'>${e.site ? '📍 ' + e.site : '&nbsp;'}</div>
             </div>
         `).join('');
     }
-    
+
     function doSearch() {
         const val = document.getElementById('empId').value.trim();
         if (!val) {
-            alert("請輸入工號或姓名");
+            alert('請輸入工號或姓名');
             return;
         }
-        
+
         const keywords = val.split(/\s+/);
         if (typeof WORKER_DATA === 'undefined') {
-            alert("錯誤：無法讀取員工資料(WORKER_DATA missing)");
+            alert('錯誤：無法讀取員工資料(WORKER_DATA missing)');
             return;
         }
-        
-        const results = WORKER_DATA.filter(w => 
+
+        const results = WORKER_DATA.filter(w =>
             keywords.some(k => w.id.toString().includes(k) || w.name.includes(k))
         );
-        
+
         renderCards('result-display', results);
-        
+
         if (window.innerWidth >= 1024) {
             document.getElementById('main-card').classList.add('wide');
         }
@@ -258,58 +478,56 @@
         document.getElementById('empId').value = '';
         document.getElementById('result-display').innerHTML = '';
         if (window.innerWidth >= 1024) {
-             document.getElementById('main-card').classList.remove('wide');
+            document.getElementById('main-card').classList.remove('wide');
         }
     }
 
-    // 今日休假查詢（依工地分組）
     function loadOffDuty() {
-    const offListEl = document.getElementById('off-list');
-    if (!offListEl) return;
-    
-    if (typeof DAYOFF === 'undefined' || !Array.isArray(DAYOFF)) {
-        offListEl.innerHTML = "今日無人休假";
-        return;
+        const offListEl = document.getElementById('off-list');
+        if (!offListEl) return;
+
+        if (typeof DAYOFF === 'undefined' || !Array.isArray(DAYOFF)) {
+            offListEl.innerHTML = '今日無人休假';
+            return;
+        }
+
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const today = `${year}/${month}/${day}`;
+
+        const list = DAYOFF.filter(d => today >= d.start && today <= d.end);
+
+        if (list.length === 0) {
+            offListEl.innerHTML = '今日無人休假';
+            return;
+        }
+
+        const grouped = list.reduce((acc, item) => {
+            const site = item.site || '其他工地';
+            if (!acc[site]) acc[site] = [];
+            acc[site].push(item);
+            return acc;
+        }, {});
+
+        let html = '';
+        for (const site in grouped) {
+            html += `<div class="site-group">`;
+            html += `<div class="site-title">📍 ${site}</div>`;
+
+            const workersHtml = grouped[site].map(e => {
+                const startDisplay = e.start.substring(e.start.indexOf('/') + 1);
+                const endDisplay = e.end.substring(e.end.indexOf('/') + 1);
+                return `&nbsp;&nbsp;• ${e.id} ${e.name} <span class="date-range">(${startDisplay}~${endDisplay})</span>`;
+            }).join('<br>');
+
+            html += workersHtml;
+            html += '</div><br>';
+        }
+
+        offListEl.innerHTML = html;
     }
-    
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    const today = `${year}/${month}/${day}`;
-    
-    const list = DAYOFF.filter(d => today >= d.start && today <= d.end);
-    
-    if (list.length === 0) {
-        offListEl.innerHTML = "今日無人休假";
-        return;
-    }
-    
-    const grouped = list.reduce((acc, item) => {
-        const site = item.site || '其他工地';
-        if (!acc[site]) acc[site] = [];
-        acc[site].push(item);
-        return acc;
-    }, {});
-    
-    let html = '';
-    for (const site in grouped) {
-        html += `<div class="site-group">`;
-        html += `<div class="site-title">📍 ${site}</div>`;
-        
-        const workersHtml = grouped[site].map(e => {
-            // ✅ 修正：使用 substring 和 indexOf 正確截取月/日
-            const startDisplay = e.start.substring(e.start.indexOf('/') + 1);
-            const endDisplay = e.end.substring(e.end.indexOf('/') + 1);
-            return `&nbsp;&nbsp;• ${e.id} ${e.name} <span class="date-range">(${startDisplay}~${endDisplay})</span>`;
-        }).join('<br>');
-        
-        html += workersHtml;
-        html += `</div><br>`;
-    }
-    
-    offListEl.innerHTML = html;
-}
 </script>
 
 </body>
