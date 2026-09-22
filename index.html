@@ -241,6 +241,28 @@
             font-size: 18px;
             max-width: 450px;
         }
+        /* 查詢結果：用 Flex，少於一排時可自動置中 */
+#result-display {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+/* 手機查詢：一排兩張 */
+#result-display .emp-card {
+    width: calc((100% - 10px) / 2);
+    max-width: none;
+}
+
+/* PC 查詢：一排最多八張；不足八張時整排置中 */
+@media (min-width: 1024px) {
+    #result-display .emp-card {
+        width: calc((100% - 70px) / 8);
+        padding: 6px;
+    }
+}
 
         @media (max-width: 600px) {
             .mobile-br {
