@@ -35,6 +35,7 @@
         padding: 10px 0;
         width: 100%;
         margin: 0 auto;
+        justify-items: center; /* 新增：置中 grid 項目 */
     }
     
     .emp-card { 
@@ -48,12 +49,26 @@
         display: flex; 
         flex-direction: column; 
         justify-content: space-between; 
-        transition: transform 0.2s; 
+        transition: transform 0.2s;
+        width: 100%; /* 新增：填滿 grid 格子 */
+        max-width: 220px; /* 新增：限制最大寬度，確保一致 */
     }
     
     .emp-card:hover { transform: translateY(-2px); }
     .emp-card .emp-name-tag { font-weight: bold; font-size: clamp(13px, 1.2vw, 20px); margin-bottom: 6px; color: #2c3e50; border-bottom: 2px solid #f0f0f0; padding-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .emp-card img { width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 6px; border: 1px solid #eee; flex-grow: 1; }
+    
+    /* 修正：照片寬度一致 */
+    .emp-card img { 
+        width: 100%; 
+        height: auto; 
+        aspect-ratio: 3 / 4; 
+        object-fit: cover; 
+        border-radius: 6px; 
+        border: 1px solid #eee; 
+        flex-grow: 1; 
+        display: block;
+    }
+    
     .emp-card .emp-site-tag { font-size: 13px; color: #e67e22; margin-top: 6px; font-weight: bold; }
     
     /* PC 版：一排 8 個 */
@@ -63,7 +78,8 @@
             gap: 10px;
         }
         .emp-card { 
-            padding: 6px; 
+            padding: 6px;
+            max-width: none; /* PC 版取消最大寬度限制 */
         }
     }
     
