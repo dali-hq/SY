@@ -513,12 +513,14 @@
             return;
         }
 
-        const now = new Date();
-        const year = now.getFullYear();
+        const now = new Date(); 
+        /* 西元年轉民國年：例如 2026 → 115 */
+        const rocYear = now.getFullYear() - 1911;
         const month = String(now.getMonth() + 1).padStart(2, '0');
         const day = String(now.getDate()).padStart(2, '0');
-        const today = `${year}/${month}/${day}`;
-
+        /* 例如今天會得到：115/09/24 */
+        const today = `${rocYear}/${month}/${day}`;
+        
         const list = DAYOFF.filter(d => today >= d.start && today <= d.end);
 
         if (list.length === 0) {
