@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>員工出勤查詢</title>
 
     <style>
@@ -138,6 +137,20 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
 
+        .top-back-button {
+            margin-bottom: 16px;
+            padding: 9px 16px;
+            border: 0;
+            border-radius: 6px;
+            background: #1f4e79;
+            color: #ffffff;
+            cursor: pointer;
+        }
+
+        .top-back-button:hover {
+            background: #163a5a;
+        }
+
         .attendance-card h2 {
             margin-top: 0;
             color: #1f4e79;
@@ -197,29 +210,17 @@
             margin-top: 18px;
         }
 
-        .print-button,
-        .back-button {
+        .print-button {
             padding: 9px 16px;
             border: 0;
             border-radius: 6px;
+            background: #2e7d32;
             color: #ffffff;
             cursor: pointer;
         }
 
-        .print-button {
-            background: #2e7d32;
-        }
-
         .print-button:hover {
             background: #1b5e20;
-        }
-
-        .back-button {
-            background: #1f4e79;
-        }
-
-        .back-button:hover {
-            background: #163a5a;
         }
 
         #noResult {
@@ -295,6 +296,7 @@
             #loading,
             #errorMessage,
             #noResult,
+            .top-back-button,
             .button-group {
                 display: none !important;
             }
@@ -308,8 +310,8 @@
 
             .attendance-card h2 {
                 margin: 0 0 8px;
-                font-size: 16pt;
                 color: #000000;
+                font-size: 16pt;
             }
 
             .employee-info {
@@ -381,7 +383,6 @@
         </div>
 
         <div id="locationNav" class="location-nav"></div>
-
         <div id="resultInfo"></div>
 
         <div id="loading">
@@ -611,6 +612,27 @@
 
             card.className = "attendance-card";
 
+            const topBackButton =
+                document.createElement("button");
+
+            topBackButton.type = "button";
+            topBackButton.className = "top-back-button";
+            topBackButton.textContent = "返回員工列表";
+
+            topBackButton.addEventListener(
+                "click",
+                () => {
+                    locationNav.style.display = "flex";
+                    renderLocationNavigation(employeeData);
+                    renderEmployees(searchInput.value);
+
+                    window.scrollTo({
+                        top: 0,
+                        behavior: "smooth"
+                    });
+                }
+            );
+
             const title =
                 document.createElement("h2");
 
@@ -650,6 +672,7 @@
                         <th>最晚時間<br>下班</th>
                     </tr>
                 </thead>
+
                 <tbody>
                     ${(employee.出勤 || [])
                         .map(day => `
@@ -682,27 +705,10 @@
                 () => window.print()
             );
 
-            const backButton =
-                document.createElement("button");
-
-            backButton.className = "back-button";
-            backButton.textContent = "返回員工列表";
-
-            backButton.addEventListener(
-                "click",
-                () => {
-                    locationNav.style.display = "flex";
-                    renderLocationNavigation(employeeData);
-                    renderEmployees(searchInput.value);
-                }
-            );
-
-            buttonGroup.append(
-                printButton,
-                backButton
-            );
+            buttonGroup.appendChild(printButton);
 
             card.append(
+                topBackButton,
                 title,
                 info,
                 wrapper,
