@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>員工門別查詢</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 24px;
+            background: #f4f6f8;
+            color: #263238;
+            font-family: Arial, "Microsoft JhengHei", sans-serif;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            margin-top: 0;
+            text-align: center;
+            color: #1f4e79;
+        }
+
+        .search-box {
+            margin: 20px 0;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #b0bec5;
+            border-radius: 8px;
+            font-size: 16px;
+            background: white;
+        }
+
+        #searchInput:focus {
+            outline: none;
+            border-color: #1976d2;
+            box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.15);
+        }
+
+        #resultInfo {
+            margin-bottom: 12px;
+            color: #607d8b;
+        }
+
+        .location-card {
+            margin-bottom: 16px;
+            overflow: hidden;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .location-title {
+            padding: 12px 16px;
+            background: #1f4e79;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .employee-list {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .employee-item {
+            padding: 11px 16px;
+            border-bottom: 1px solid #eceff1;
+            font-size: 16px;
+        }
+
+        .employee-item:last-child {
+            border-bottom: none;
+        }
+
+        .employee-item:hover {
+            background: #f1f8ff;
+        }
+
+        #noResult {
+            display: none;
+            padding: 24px;
+            text-align: center;
+            background: white;
+            border-radius: 8px;
+            color: #78909c;
+        }
+
+        #loading {
+            padding: 24px;
+            text-align: center;
+            color: #607d8b;
+        }
+
+        #errorMessage {
+            display: none;
+            padding: 16px;
+            color: #b71c1c;
+            background: #ffebee;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <main class="container">
+        <h1>員工門別查詢</h1>
+
+        <div class="search-box">
+            <input
+                type="search"
+                id="searchInput"
+                placeholder="請輸入員編或姓名"
+                autocomplete="off"
+            >
+        </div>
+
+        <div id="resultInfo"></div>
+
+        <div id="loading">
+            資料載入中...
+        </div>
+
+        <div id="errorMessage">
+            JSON 資料載入失敗，請確認檔案名稱與位置。
+        </div>
+
+        <div id="employeeContainer"></div>
+
+        <div id="noResult">
+            找不到符合的員工資料
+        </div>
+    </main>
+
+    <script>
+        let employeeData = [];
+
+        const searchInput = document.getElementById("searchInput");
+        const employeeContainer = document.getElementById("employeeContainer");
+        const noResult = document.getElementById("noResult");
+        const resultInfo = document.getElementById("resultInfo");
+        const loading = document.getElementById("loading");
+        const errorMessage = document.getElementById("errorMessage");
+
+        function renderEmployees(keyword = "") {
+            const searchText = keyword.trim().toLowerCase();
+
+            // 搜尋員編或姓名
+            const filteredData = employeeData.filter(employee => {
+                const employeeId = String(employee.員編).toLowerCase();
+                const employeeName = String(employee.姓名).toLowerCase();
+
+                return (
+                    employeeId.includes(searchText) ||
+                    employeeName.includes(searchText)
+                );
+            });
+
+            // 先依原始門別排序，再依員編數字升冪排序
+            filteredData.sort((a, b) => {
+                const locationCompare = String(a.門別).localeCompare(
+                    String(b.門別),
+                    "zh-Hant"
+                );
+
+                if (locationCompare !== 0) {
+                    return locationCompare;
+                }
+
+                return Number(a.員編) - Number(b.員編);
+            });
+
+            employeeContainer.innerHTML = "";
+
+            resultInfo.textContent =
+                `共 ${filteredData.length} 位員工`;
+
+            if (filteredData.length === 0) {
+                noResult.style.display = "block";
+                return;
+            }
+
+            noResult.style.display = "none";
+
+            // 依「顯示門別」分組
+            const groupedByLocation = {};
+
+            filteredData.forEach(employee => {
+                const displayLocation = employee.顯示門別;
+
+                if (!groupedByLocation[displayLocation]) {
+                    groupedByLocation[displayLocation] = [];
+                }
+
+                groupedByLocation[displayLocation].push(employee);
+            });
+
+            // 顯示門別升冪排列
+            Object.keys(groupedByLocation)
+                .sort((a, b) => a.localeCompare(b, "zh-Hant"))
+                .forEach(displayLocation => {
+                    const locationCard = document.createElement("section");
+                    locationCard.className = "location-card";
+
+                    const locationTitle = document.createElement("div");
+                    locationTitle.className = "location-title";
+                    locationTitle.textContent = displayLocation;
+
+                    const employeeList = document.createElement("ul");
+                    employeeList.className = "employee-list";
+
+                    // 同一顯示門別內，員編升冪
+                    groupedByLocation[displayLocation]
+                        .sort((a, b) => Number(a.員編) - Number(b.員編))
+                        .forEach(employee => {
+                            const employeeItem = document.createElement("li");
+                            employeeItem.className = "employee-item";
+                            employeeItem.textContent =
+                                `${employee.員編} ${employee.姓名}`;
+
+                            employeeList.appendChild(employeeItem);
+                        });
+
+                    locationCard.appendChild(locationTitle);
+                    locationCard.appendChild(employeeList);
+                    employeeContainer.appendChild(locationCard);
+                });
+        }
+
+        // 輸入員編或姓名時即時搜尋
+        searchInput.addEventListener("input", event => {
+            renderEmployees(event.target.value);
+        });
+
+        // 載入 JSON
+        fetch("員工最後門別.json")
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP 錯誤：${response.status}`);
+                }
+
+                return response.json();
+            })
+            .then(data => {
+                employeeData = data;
+                loading.style.display = "none";
+                renderEmployees();
+            })
+            .catch(error => {
+                console.error(error);
+                loading.style.display = "none";
+                errorMessage.style.display = "block";
+            });
+    </script>
+</body>
+</html>
