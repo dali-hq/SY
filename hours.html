@@ -29,6 +29,31 @@
             color: #1f4e79;
         }
 
+        .month-nav {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 16px 0;
+        }
+
+        .month-button {
+            min-width: 80px;
+            padding: 9px 18px;
+            border: 1px solid #90a4ae;
+            border-radius: 6px;
+            background: #ffffff;
+            color: #1f4e79;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .month-button:hover,
+        .month-button.active {
+            border-color: #1f4e79;
+            background: #1f4e79;
+            color: #ffffff;
+        }
+
         .search-box {
             margin: 20px 0;
         }
@@ -305,6 +330,7 @@
             }
 
             h1,
+            .month-nav,
             .search-box,
             .location-nav,
             #resultInfo,
@@ -393,6 +419,8 @@
     <main class="container">
         <h1>員工出勤查詢</h1>
 
+        <div id="monthNav" class="month-nav"></div>
+
         <div class="search-box">
             <input
                 type="search"
@@ -410,7 +438,7 @@
         </div>
 
         <div id="errorMessage">
-            JSON 資料載入失敗，請確認檔案名稱與位置。
+            JSON 資料載入失敗，請確認月份檔案名稱與位置。
         </div>
 
         <div id="employeeContainer"></div>
@@ -422,6 +450,17 @@
 
     <script>
         let employeeData = [];
+        let currentMonth = "10月";
+
+        const monthFiles = {
+            "9月": "員工出勤資料_09月.json",
+            "10月": "員工出勤資料_10月.json"
+        };
+
+        const monthData = {};
+
+        const monthNav =
+            document.getElementById("monthNav");
 
         const searchInput =
             document.getElementById("searchInput");
@@ -462,6 +501,48 @@
         }
 
 
+        function renderMonthNavigation() {
+            monthNav.innerHTML = "";
+
+            Object.keys(monthFiles).forEach(month => {
+                const button =
+                    document.createElement("button");
+
+                button.type = "button";
+                button.className = "month-button";
+                button.textContent = month;
+
+                if (month === currentMonth) {
+                    button.classList.add("active");
+                }
+
+                button.addEventListener(
+                    "click",
+                    () => {
+                        currentMonth = month;
+                        employeeData = monthData[month];
+
+                        searchInput.value = "";
+                        locationNav.style.display = "flex";
+
+                        document
+                            .querySelectorAll(".month-button")
+                            .forEach(item =>
+                                item.classList.remove("active")
+                            );
+
+                        button.classList.add("active");
+
+                        renderLocationNavigation(employeeData);
+                        renderEmployees();
+                    }
+                );
+
+                monthNav.appendChild(button);
+            });
+        }
+
+
         function renderLocationNavigation(data) {
             locationNav.innerHTML = "";
 
@@ -489,30 +570,33 @@
                 button.className = "location-link";
                 button.textContent = location;
 
-                button.addEventListener("click", () => {
-                    const target = [
-                        ...document.querySelectorAll(
-                            ".location-card"
-                        )
-                    ].find(card =>
-                        card.dataset.location === location
-                    );
-
-                    if (target) {
-                        target.scrollIntoView({
-                            behavior: "smooth",
-                            block: "start"
-                        });
-                    }
-
-                    document
-                        .querySelectorAll(".location-link")
-                        .forEach(link =>
-                            link.classList.remove("active")
+                button.addEventListener(
+                    "click",
+                    () => {
+                        const target = [
+                            ...document.querySelectorAll(
+                                ".location-card"
+                            )
+                        ].find(card =>
+                            card.dataset.location === location
                         );
 
-                    button.classList.add("active");
-                });
+                        if (target) {
+                            target.scrollIntoView({
+                                behavior: "smooth",
+                                block: "start"
+                            });
+                        }
+
+                        document
+                            .querySelectorAll(".location-link")
+                            .forEach(link =>
+                                link.classList.remove("active")
+                            );
+
+                        button.classList.add("active");
+                    }
+                );
 
                 locationNav.appendChild(button);
             });
@@ -544,7 +628,7 @@
             employeeContainer.innerHTML = "";
 
             resultInfo.textContent =
-                `共 ${filteredData.length} 位員工`;
+                `${currentMonth}：共 ${filteredData.length} 位員工`;
 
             if (filteredData.length === 0) {
                 noResult.style.display = "block";
@@ -632,7 +716,11 @@
                 };
             }
 
-            if (earliest && latest && earliest === latest) {
+            if (
+                earliest &&
+                latest &&
+                earliest === latest
+            ) {
                 return {
                     text: "異常",
                     className: "status-error"
@@ -650,7 +738,7 @@
             locationNav.style.display = "none";
 
             resultInfo.textContent =
-                `${employee.員編} ${employee.姓名} 的當月出勤資料`;
+                `${currentMonth}｜${employee.員編} ${employee.姓名}`;
 
             employeeContainer.innerHTML = "";
             noResult.style.display = "none";
@@ -685,7 +773,7 @@
                 document.createElement("h2");
 
             title.textContent =
-                employee.顯示門別;
+                `${currentMonth}｜${employee.顯示門別}`;
 
             const info =
                 document.createElement("div");
@@ -819,25 +907,42 @@
         );
 
 
-        fetch("員工出勤資料.json")
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(
-                        `HTTP錯誤：${response.status}`
-                    );
-                }
+        Promise.all(
+            Object.entries(monthFiles).map(
+                ([month, fileName]) => {
+                    return fetch(fileName)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(
+                                    `${fileName} 載入失敗`
+                                );
+                            }
 
-                return response.json();
-            })
-            .then(data => {
-                employeeData = data;
+                            return response.json();
+                        })
+                        .then(data => {
+                            monthData[month] = data;
+                        });
+                }
+            )
+        )
+            .then(() => {
+                employeeData =
+                    monthData[currentMonth];
+
+                renderMonthNavigation();
+
                 loading.style.display = "none";
                 renderLocationNavigation(employeeData);
                 renderEmployees();
             })
             .catch(error => {
                 console.error(error);
+
                 loading.style.display = "none";
+                errorMessage.textContent =
+                    "月份 JSON 載入失敗，請確認檔案名稱與位置。";
+
                 errorMessage.style.display = "block";
             });
     </script>
