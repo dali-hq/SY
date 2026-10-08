@@ -261,14 +261,13 @@
         let attendanceData = [];
         let filteredData = [];
 
-        // 設定要載入的月分檔案
+        // 設定要載入的月分檔案（無空格）
         const MONTHS_TO_LOAD = [
             '員工出勤資料_09月.json',
             '員工出勤資料_10月.json'
-            // 之後要加 11 月，就在這裡加 '員工出勤資料_11 月.json'
         ];
 
-        // 門別簡稱對照（方案 B 使用）
+        // 門別簡稱對照
         const locationShortNames = {
             "11305 北港臉型機": "北港",
             "11203 大里農會": "大里",
@@ -282,48 +281,59 @@
         async function loadData() {
             try {
                 const responses = await Promise.all(
-                    MONTHS_TO_LOAD.map(url => fetch(url))
+                    MONTHS_TO_LOAD.map(fileName => fetch(fileName))
                 );
 
-                const allData = await Promise.all(
-                    responses.map(res => res.json())
+                const monthlyData = await Promise.all(
+                    responses.map(response => {
+                        if (!response.ok) {
+                            throw new Error(`無法載入檔案：${response.url}`);
+                        }
+                        return response.json();
+                    })
                 );
 
-                attendanceData = mergeMonthlyData(allData);
-                
+                attendanceData = mergeMonthlyData(monthlyData);
+                filteredData = attendanceData;
+
                 initFilters();
                 renderTable();
             } catch (error) {
-                console.error('載入資料失敗:', error);
-                alert('載入資料失敗，請確認 JSON 檔案是否存在');
+                console.error('載入資料失敗：', error);
+                alert(`載入資料失敗：${error.message}`);
             }
         }
 
         // 合併多個月分資料
-        function mergeMonthlyData(monthlyDataArray) {
+        function mergeMonthlyData(monthlyDataList) {
             const employeeMap = new Map();
 
-            monthlyDataArray.forEach(monthData => {
+            monthlyDataList.forEach(monthData => {
                 monthData.forEach(employee => {
-                    const key = employee.員編;
-                    
-                    if (employeeMap.has(key)) {
-                        const existing = employeeMap.get(key);
-                        existing.出勤 = existing.出勤.concat(employee.出勤);
-                        
-                        // 累計遲到分鐘數
-                        existing.遲到累計 = (existing.遲到累計 || 0) + (employee.遲到累計 || 0);
+                    const employeeId = String(employee.員編);
+
+                    if (!employeeMap.has(employeeId)) {
+                        employeeMap.set(employeeId, {
+                            ...employee,
+                            出勤: [...(employee.出勤 || [])],
+                            遲到累計: Number(employee.遲到累計 || 0)
+                        });
                     } else {
-                        employeeMap.set(key, { ...employee });
+                        const existing = employeeMap.get(employeeId);
+
+                        existing.出勤.push(...(employee.出勤 || []));
+                        existing.遲到累計 += Number(employee.遲到累計 || 0);
                     }
                 });
             });
 
-            return Array.from(employeeMap.values()).sort((a, b) => {
-                const aNum = parseInt(a.員編) || 999999999;
-                const bNum = parseInt(b.員編) || 999999999;
-                return aNum - bNum;
-            });
+            for (const employee of employeeMap.values()) {
+                employee.出勤.sort((a, b) => {
+                    return String(a.日期).localeCompare(String(b.日期));
+                });
+            }
+
+            return Array.from(employeeMap.values());
         }
 
         // 初始化篩選器
@@ -331,11 +341,9 @@
             const locationFilter = document.getElementById('locationFilter');
             const employeeFilter = document.getElementById('employeeFilter');
 
-            // 清空現有選項
             locationFilter.innerHTML = '<option value="">全部門別</option>';
             employeeFilter.innerHTML = '<option value="">全部員工</option>';
 
-            // 門別篩選
             const locations = [...new Set(attendanceData.map(emp => emp.顯示門別))];
             locations.sort().forEach(loc => {
                 const option = document.createElement('option');
@@ -344,7 +352,6 @@
                 locationFilter.appendChild(option);
             });
 
-            // 員工篩選
             attendanceData.forEach(emp => {
                 const option = document.createElement('option');
                 option.value = emp.員編;
@@ -352,7 +359,6 @@
                 employeeFilter.appendChild(option);
             });
 
-            // 監聽篩選事件
             locationFilter.addEventListener('change', filterData);
             employeeFilter.addEventListener('change', filterData);
         }
@@ -374,109 +380,17 @@
         // 取得門別簡稱
         function getLocationShortName(locationFull) {
             if (!locationFull || locationFull === "nan") return "";
-            
-            // 優先使用對照表
+
             const shortName = locationShortNames[locationFull];
             if (shortName) return shortName;
-            
-            // 若對照表沒有，嘗試從完整名稱中萃取關鍵字
+
             if (locationFull.includes("北港")) return "北港";
             if (locationFull.includes("大里")) return "大里";
             if (locationFull.includes("南七")) return "南七";
             if (locationFull.includes("嘉義")) return "嘉配";
             if (locationFull.includes("大門") || locationFull.includes("九樓")) return "總公司";
-            
+
             return locationFull;
-        }
-
-        // 計算工時、加班、狀態（方案 B 使用）
-        function computeAttendanceFields(earliestTime, latestTime) {
-            if (!earliestTime || !latestTime) {
-                return {
-                    workHours: null,
-                    systemOt: null,
-                    status: "休"
-                };
-            }
-
-            const baseDate = new Date('1900-01-01');
-            const startTime = new Date(`1900-01-01 ${earliestTime}`);
-            const endTime = new Date(`1900-01-01 ${latestTime}`);
-
-            // 正常區間
-            const normalMorningStart = new Date('1900-01-01 08:00:00');
-            const normalMorningEnd = new Date('1900-01-01 12:00:00');
-            const normalAfternoonStart = new Date('1900-01-01 13:00:00');
-            const normalAfternoonEnd = new Date('1900-01-01 17:00:00');
-
-            // 計算交集（以毫秒為單位）
-            function intersectionMilliseconds(start, end, segStart, segEnd) {
-                const left = new Date(Math.max(start.getTime(), segStart.getTime()));
-                const right = new Date(Math.min(end.getTime(), segEnd.getTime()));
-                if (left >= right) return 0;
-                return right.getTime() - left.getTime();
-            }
-
-            const normalMs = (
-                intersectionMilliseconds(startTime, endTime, normalMorningStart, normalMorningEnd) +
-                intersectionMilliseconds(startTime, endTime, normalAfternoonStart, normalAfternoonEnd)
-            );
-
-            const normalHours = normalMs / (1000 * 60 * 60);
-
-            // 工時顯示
-            let workHours;
-            if (normalHours >= 8) {
-                workHours = 8;
-            } else if (normalHours >= 4) {
-                workHours = 4;
-            } else {
-                workHours = null;
-            }
-
-            // 早上加班：起點 <= 07:00 且有正常工時
-            const otStartLimit = new Date('1900-01-01 07:00:00');
-            let morningOt = null;
-            if (workHours !== null && startTime <= otStartLimit) {
-                morningOt = 1;
-            }
-
-            // 晚上加班：終點 >= 18:00 且有正常工時
-            const otEndLimit = new Date('1900-01-01 18:00:00');
-            let eveningOt = null;
-            if (workHours !== null && endTime >= otEndLimit) {
-                eveningOt = 1;
-            }
-
-            // 系統加班
-            let systemOt;
-            if (morningOt === null && eveningOt === null) {
-                systemOt = null;
-            } else if (morningOt !== null && eveningOt === null) {
-                systemOt = 1;
-            } else if (morningOt === null && eveningOt !== null) {
-                systemOt = 1;
-            } else {
-                systemOt = 2;
-            }
-
-            // 狀態
-            let status;
-            if (workHours === null) {
-                status = "異常";
-            } else if (workHours === 4) {
-                status = "上半天";
-            } else if (workHours === 8) {
-                status = "";
-            } else {
-                status = "待確認";
-            }
-
-            return {
-                workHours,
-                systemOt,
-                status
-            };
         }
 
         // 渲染表格
@@ -485,7 +399,6 @@
             tableBody.innerHTML = '';
 
             filteredData.forEach(employee => {
-                // 員工列
                 const employeeRow = document.createElement('tr');
                 employeeRow.className = 'employee-row';
 
@@ -501,105 +414,73 @@
 
                 employeeRow.appendChild(locationCell);
                 employeeRow.appendChild(lateCell);
+                tableBody.appendChild(employeeRow);
 
-                // 日期與出勤資料
                 employee.出勤.forEach(day => {
                     const attendanceRow = document.createElement('tr');
                     attendanceRow.className = 'attendance-row';
 
-                    // 日期
                     const dateCell = document.createElement('td');
                     dateCell.className = 'date-cell';
                     const dateObj = new Date(day.日期);
                     dateCell.textContent = `${dateObj.getMonth() + 1}/${dateObj.getDate()}`;
                     attendanceRow.appendChild(dateCell);
 
-                    // 門別簡稱
                     const locationShortCell = document.createElement('td');
                     locationShortCell.className = 'location-cell';
                     locationShortCell.textContent = day.門別簡稱 || getLocationShortName(day.門別);
                     attendanceRow.appendChild(locationShortCell);
 
-                    // 上班時間
                     const startTimeCell = document.createElement('td');
                     startTimeCell.className = 'time-cell';
                     startTimeCell.textContent = day.最早時間 || '';
                     attendanceRow.appendChild(startTimeCell);
 
-                    // 下班時間
                     const endTimeCell = document.createElement('td');
                     endTimeCell.className = 'time-cell';
                     endTimeCell.textContent = day.最晚時間 || '';
                     attendanceRow.appendChild(endTimeCell);
 
-                    // 工時
                     const workHoursCell = document.createElement('td');
-                    if (day.工時 !== null && day.工時 !== undefined) {
+                    if (day.工時 === null || day.工時 === undefined) {
+                        workHoursCell.textContent = '';
+                        workHoursCell.className = 'work-hours-none';
+                    } else {
                         workHoursCell.textContent = day.工時;
                         if (day.工時 === 8) {
                             workHoursCell.className = 'work-hours-8';
                         } else if (day.工時 === 4) {
                             workHoursCell.className = 'work-hours-4';
-                        } else {
-                            workHoursCell.className = 'work-hours-none';
-                        }
-                    } else {
-                        // 方案 B：自行計算
-                        const result = computeAttendanceFields(day.最早時間, day.最晚時間);
-                        workHoursCell.textContent = result.workHours !== null ? result.workHours : '';
-                        if (result.workHours === 8) {
-                            workHoursCell.className = 'work-hours-8';
-                        } else if (result.workHours === 4) {
-                            workHoursCell.className = 'work-hours-4';
-                        } else if (result.workHours === null) {
-                            workHoursCell.className = 'work-hours-none';
                         }
                     }
                     attendanceRow.appendChild(workHoursCell);
 
-                    // 系統加班
                     const systemOtCell = document.createElement('td');
-                    if (day.系統加班 !== null && day.系統加班 !== undefined) {
+                    if (day.系統加班 === null || day.系統加班 === undefined) {
+                        systemOtCell.textContent = '';
+                    } else {
                         systemOtCell.textContent = day.系統加班;
                         if (day.系統加班 === 2) {
                             systemOtCell.className = 'system-ot-2';
                         } else if (day.系統加班 === 1) {
                             systemOtCell.className = 'system-ot-1';
                         }
-                    } else {
-                        // 方案 B：自行計算
-                        const result = computeAttendanceFields(day.最早時間, day.最晚時間);
-                        systemOtCell.textContent = result.systemOt !== null ? result.systemOt : '';
-                        if (result.systemOt === 2) {
-                            systemOtCell.className = 'system-ot-2';
-                        } else if (result.systemOt === 1) {
-                            systemOtCell.className = 'system-ot-1';
-                        }
                     }
                     attendanceRow.appendChild(systemOtCell);
 
-                    // 狀態
                     const statusCell = document.createElement('td');
-                    if (day.狀態 !== null && day.狀態 !== undefined && day.狀態 !== "") {
+                    if (!day.狀態 || day.狀態 === "") {
+                        statusCell.textContent = '';
+                    } else {
                         statusCell.textContent = day.狀態;
                         if (day.狀態 === "異常") {
                             statusCell.className = 'status-abnormal';
                         } else if (day.狀態 === "上半天") {
                             statusCell.className = 'status-half';
                         }
-                    } else {
-                        // 方案 B：自行計算
-                        const result = computeAttendanceFields(day.最早時間, day.最晚時間);
-                        statusCell.textContent = result.status;
-                        if (result.status === "異常") {
-                            statusCell.className = 'status-abnormal';
-                        } else if (result.status === "上半天") {
-                            statusCell.className = 'status-half';
-                        }
                     }
                     attendanceRow.appendChild(statusCell);
 
-                    // 備註
                     const noteCell = document.createElement('td');
                     noteCell.className = 'note-cell';
                     const noteInput = document.createElement('input');
@@ -624,8 +505,8 @@
                     const dateObj = new Date(day.日期);
                     const dateStr = `${dateObj.getMonth() + 1}/${dateObj.getDate()}`;
                     const locationShort = day.門別簡稱 || getLocationShortName(day.門別);
-                    const workHours = day.工時 !== null && day.工時 !== undefined ? day.工時 : '';
-                    const systemOt = day.系統加班 !== null && day.系統加班 !== undefined ? day.系統加班 : '';
+                    const workHours = (day.工時 === null || day.工時 === undefined) ? '' : day.工時;
+                    const systemOt = (day.系統加班 === null || day.系統加班 === undefined) ? '' : day.系統加班;
                     const status = day.狀態 || '';
                     const note = day.備註 || '';
 
@@ -640,7 +521,6 @@
             link.click();
         }
 
-        // 頁面載入時初始化
         window.addEventListener('DOMContentLoaded', loadData);
     </script>
 </body>
