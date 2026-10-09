@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>實毅員工出勤-beta</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 24px;
+            background: #f4f6f8;
+            color: #263238;
+            font-family: Arial, "Microsoft JhengHei", sans-serif;
+            font-size: 18px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            margin: 0 0 18px;
+            color: #1f4e79;
+            text-align: center;
+            font-size: 28px;
+        }
+
+        .month-nav {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            margin: 16px 0;
+        }
+
+        .month-button,
+        .location-link,
+        .top-back-button,
+        .print-button {
+            border: 0;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .month-button {
+            min-width: 82px;
+            padding: 10px 18px;
+            border: 1px solid #90a4ae;
+            background: #fff;
+            color: #1f4e79;
+            font-size: 18px;
+        }
+
+        .month-button:hover,
+        .month-button.active {
+            border-color: #1f4e79;
+            background: #1f4e79;
+            color: #fff;
+        }
+
+        .search-box {
+            margin: 20px 0 16px;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #b0bec5;
+            border-radius: 8px;
+            background: #fff;
+            font-size: 16px;
+        }
+
+        #searchInput:focus {
+            outline: none;
+            border-color: #1976d2;
+            box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.15);
+        }
+
+        .location-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 16px 0;
+            padding: 12px;
+            border: 1px solid #d8e0e5;
+            border-radius: 8px;
+            background: #fff;
+        }
+
+        .location-nav-title {
+            width: 100%;
+            color: #455a64;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .location-link {
+            padding: 8px 12px;
+            border: 1px solid #90a4ae;
+            background: #f8fafb;
+            color: #1f4e79;
+            font-size: 14px;
+        }
+
+        .location-link:hover,
+        .location-link.active {
+            border-color: #1f4e79;
+            background: #1f4e79;
+            color: #fff;
+        }
+
+        #resultInfo {
+            margin: 14px 0;
+            color: #607d8b;
+            font-size: 15px;
+        }
+
+        #loading,
+        #noResult,
+        #errorMessage {
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        #loading {
+            color: #607d8b;
+        }
+
+        #noResult {
+            display: none;
+            background: #fff;
+            color: #78909c;
+        }
+
+        #errorMessage {
+            display: none;
+            background: #ffebee;
+            color: #b71c1c;
+        }
+
+        .location-card,
+        .attendance-card {
+            margin-bottom: 20px;
+            overflow: hidden;
+            border-radius: 10px;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .location-card {
+            scroll-margin-top: 20px;
+        }
+
+        .location-title {
+            padding: 12px 16px;
+            background: #1f4e79;
+            color: #fff;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .employee-grid {
+            display: grid;
+            grid-template-columns: repeat(8, minmax(120px, 1fr));
+            gap: 10px;
+            padding: 16px;
+        }
+
+        .employee-item {
+            display: block;
+            padding: 12px 8px;
+            border: 1px solid #cfd8dc;
+            border-radius: 6px;
+            background: #fafafa;
+            color: #263238;
+            text-align: center;
+            text-decoration: none;
+            font-size: 15px;
+        }
+
+        .employee-item:hover {
+            border-color: #1976d2;
+            background: #e3f2fd;
+            color: #0d47a1;
+        }
+
+        .attendance-card {
+            padding: 20px;
+        }
+
+        .top-back-button {
+            margin-bottom: 16px;
+            padding: 10px 16px;
+            background: #1f4e79;
+            color: #fff;
+            font-size: 15px;
+        }
+
+        .attendance-card h2 {
+            margin: 0 0 16px;
+            color: #1f4e79;
+            font-size: 22px;
+        }
+
+        .employee-info {
+            margin-bottom: 18px;
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        .attendance-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            border: 1px solid #90a4ae;
+        }
+
+        .attendance-table {
+            width: 100%;
+            min-width: 1050px;
+            border-collapse: collapse;
+            table-layout: fixed;
+            background: #fff;
+        }
+
+        .attendance-table th,
+        .attendance-table td {
+            padding: 10px 6px;
+            border: 1px solid #90a4ae;
+            text-align: center;
+            word-break: break-word;
+            font-size: 15px;
+        }
+
+        .attendance-table th {
+            background: #e3f2fd;
+            color: #1f4e79;
+        }
+
+        .attendance-table th:nth-child(1),
+        .attendance-table td:nth-child(1) {
+            width: 110px;
+        }
+
+        .attendance-table th:nth-child(2),
+        .attendance-table td:nth-child(2) {
+            width: 110px;
+        }
+
+        .attendance-table th:nth-child(3),
+        .attendance-table td:nth-child(3),
+        .attendance-table th:nth-child(4),
+        .attendance-table td:nth-child(4) {
+            width: 105px;
+        }
+
+        .attendance-table th:nth-child(5),
+        .attendance-table td:nth-child(5) {
+            width: 75px;
+        }
+
+        .attendance-table th:nth-child(6),
+        .attendance-table td:nth-child(6) {
+            width: 110px;
+        }
+
+        .attendance-table th:nth-child(7),
+        .attendance-table td:nth-child(7) {
+            width: 95px;
+        }
+
+        .attendance-table th:nth-child(8),
+        .attendance-table td:nth-child(8) {
+            width: 250px;
+        }
+
+        .status-rest {
+            color: #616161;
+        }
+
+        .status-error {
+            color: #c62828;
+            font-weight: bold;
+        }
+
+        .status-half,
+        .work-hours-4 {
+            color: #ef6c00;
+            font-weight: bold;
+        }
+
+        .work-hours-8 {
+            color: #2e7d32;
+            font-weight: bold;
+        }
+
+        .system-overtime {
+            color: #1565c0;
+            font-weight: bold;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        .print-button {
+            padding: 10px 16px;
+            background: #2e7d32;
+            color: #fff;
+            font-size: 15px;
+        }
+
+        @media (max-width: 1000px) {
+            .employee-grid {
+                grid-template-columns: repeat(4, minmax(140px, 1fr));
+            }
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 12px;
+            }
+
+            .employee-grid {
+                grid-template-columns: repeat(2, minmax(120px, 1fr));
+            }
+        }
+
+        @media print {
+            body {
+                padding: 0;
+                background: #fff;
+                font-size: 14px;
+            }
+
+            .container {
+                max-width: 100%;
+                padding: 0 8px;
+            }
+
+            h1 {
+                font-size: 18px;
+                margin: 8px 0;
+            }
+            h1,
+            .month-nav,
+            .search-box,
+            .location-nav,
+            #resultInfo,
+            .top-back-button,
+            .button-group {
+                display: none !important;
+            }
+
+            .attendance-card {
+                box-shadow: none;
+                padding: 8px;
+                margin: 0;
+            }
+
+            .attendance-card h2 {
+                font-size: 16px;
+                margin: 0 0 8px;
+            }
+
+            .employee-info {
+                font-size: 13px;
+                margin: 0 0 8px;
+                line-height: 1.6;
+            }
+
+            .attendance-wrapper {
+                overflow: visible;
+                border: none;
+            }
+
+            .attendance-table {
+                width: 100%;
+                min-width: 0;
+                table-layout: auto;
+                font-size: 11px;
+            }
+
+            .attendance-table th,
+            .attendance-table td {
+                padding: 4px 3px;
+                border: 1px solid #90a4ae;
+                font-size: 11px;
+                word-break: normal;
+            }
+
+            .attendance-table th:nth-child(1),
+            .attendance-table td:nth-child(1) {
+                width: 65px;
+            }
+
+            .attendance-table th:nth-child(2),
+            .attendance-table td:nth-child(2) {
+                width: 70px;
+            }
+
+            .attendance-table th:nth-child(3),
+            .attendance-table td:nth-child(3),
+            .attendance-table th:nth-child(4),
+            .attendance-table td:nth-child(4) {
+                width: 65px;
+            }
+
+            .attendance-table th:nth-child(5),
+            .attendance-table td:nth-child(5) {
+                width: 45px;
+            }
+
+            .attendance-table th:nth-child(6),
+            .attendance-table td:nth-child(6) {
+                width: 70px;
+            }
+
+            .attendance-table th:nth-child(7),
+            .attendance-table td:nth-child(7) {
+                width: 55px;
+            }
+
+            .attendance-table th:nth-child(8),
+            .attendance-table td:nth-child(8) {
+                width: 120px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="container">
+        <h1>實毅員工出勤-beta</h1>
+
+        <div id="monthNav" class="month-nav"></div>
+
+        <div class="search-box">
+            <input
+                id="searchInput"
+                type="search"
+                placeholder="請輸入員編或姓名"
+                autocomplete="off"
+            >
+        </div>
+
+        <div id="locationNav" class="location-nav"></div>
+        <div id="resultInfo"></div>
+
+        <div id="loading">載入出勤資料中...</div>
+        <div id="errorMessage"></div>
+
+        <div id="employeeContainer"></div>
+
+        <div id="noResult">
+            查無符合條件的員工資料。
+        </div>
+    </main>
+
+    <script>
+        const monthFiles = {
+            "9月": "員工出勤資料_09月.json",
+            "10月": "員工出勤資料_10月.json"
+        };
+
+        let currentMonth = "10月";
+        let monthData = {};
+        let employeeData = [];
+
+        const monthNav = document.getElementById("monthNav");
+        const searchInput = document.getElementById("searchInput");
+        const locationNav = document.getElementById("locationNav");
+        const resultInfo = document.getElementById("resultInfo");
+        const loading = document.getElementById("loading");
+        const errorMessage = document.getElementById("errorMessage");
+        const employeeContainer = document.getElementById("employeeContainer");
+        const noResult = document.getElementById("noResult");
+
+        function escapeHtml(value) {
+            return String(value ?? "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function switchMonth(month) {
+           currentMonth = month;
+            employeeData = monthData[month] || [];
+
+            searchInput.value = "";
+            locationNav.style.display = "flex";
+
+            renderMonthNavigation();
+            renderLocationNavigation(employeeData);
+            renderEmployeeList("");
+
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        }
+
+        function getLocation(employee) {
+            return employee.顯示門別 || employee.門別 || "未分類";
+        }
+
+        function sortEmployees(list) {
+            return [...list].sort((a, b) => {
+                const locationCompare = getLocation(a).localeCompare(
+                    getLocation(b),
+                    "zh-Hant"
+                );
+
+                if (locationCompare !== 0) {
+                    return locationCompare;
+                }
+
+                return String(a.員編 ?? "").localeCompare(
+                    String(b.員編 ?? ""),
+                    "zh-Hant",
+                    { numeric: true }
+                );
+            });
+        }
+
+        function createButton(text, className, clickHandler) {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = className;
+            button.textContent = text;
+            button.addEventListener("click", clickHandler);
+            return button;
+        }
+
+        function renderMonthNavigation() {
+            monthNav.innerHTML = "";
+
+            Object.keys(monthFiles).forEach((month) => {
+                const button = createButton(
+                    month,
+                    `month-button ${month === currentMonth ? "active" : ""}`,
+                    () => switchMonth(month)
+                );
+
+                monthNav.appendChild(button);
+            });
+        }
+
+        function renderLocationNavigation(list) {
+            locationNav.innerHTML = "";
+
+            const title = document.createElement("div");
+            title.className = "location-nav-title";
+            title.textContent = "門別快速前往";
+            locationNav.appendChild(title);
+
+            const locations = [...new Set(list.map(getLocation))]
+                .filter(Boolean)
+                .sort((a, b) => a.localeCompare(b, "zh-Hant"));
+
+            locations.forEach((location) => {
+                const button = createButton(
+                    location,
+                    "location-link",
+                    () => {
+                        const target = [...document.querySelectorAll(".location-card")]
+                            .find((card) => card.dataset.location === location);
+
+                        if (target) {
+                            target.scrollIntoView({
+                                behavior: "smooth",
+                                block: "start"
+                            });
+                        }
+
+                        document
+                            .querySelectorAll(".location-link")
+                            .forEach((item) => item.classList.remove("active"));
+
+                        button.classList.add("active");
+                    }
+                );
+
+                locationNav.appendChild(button);
+            });
+        }
+
+        function filterEmployees(keyword) {
+            const key = keyword.trim().toLowerCase();
+
+            if (!key) {
+                return employeeData;
+            }
+
+            return employeeData.filter((employee) => {
+                const employeeId = String(employee.員編 ?? "").toLowerCase();
+                const employeeName = String(employee.姓名 ?? "").toLowerCase();
+
+                return employeeId.includes(key) || employeeName.includes(key);
+            });
+        }
+
+        function renderEmployeeList(keyword) {
+            const filtered = sortEmployees(filterEmployees(keyword));
+
+            employeeContainer.innerHTML = "";
+            noResult.style.display = filtered.length ? "none" : "block";
+            resultInfo.textContent = `${currentMonth}：共 ${filtered.length} 位員工`;
+
+            if (!filtered.length) {
+                return;
+            }
+
+            const grouped = {};
+
+            filtered.forEach((employee) => {
+                const location = getLocation(employee);
+
+                if (!grouped[location]) {
+                    grouped[location] = [];
+                }
+
+                grouped[location].push(employee);
+            });
+
+            Object.keys(grouped)
+                .sort((a, b) => a.localeCompare(b, "zh-Hant"))
+                .forEach((location) => {
+                    const card = document.createElement("section");
+                    card.className = "location-card";
+                    card.dataset.location = location;
+
+                    const title = document.createElement("div");
+                    title.className = "location-title";
+                    title.textContent = location;
+
+                    const grid = document.createElement("div");
+                    grid.className = "employee-grid";
+
+                    sortEmployees(grouped[location]).forEach((employee) => {
+                        const item = document.createElement("a");
+                        item.href = "#";
+                        item.className = "employee-item";
+                        item.textContent = `${employee.員編 ?? ""} ${employee.姓名 ?? ""}`;
+
+                        item.addEventListener("click", (event) => {
+                            event.preventDefault();
+                            renderAttendance(employee);
+                        });
+
+                        grid.appendChild(item);
+                    });
+
+                    card.appendChild(title);
+                    card.appendChild(grid);
+                    employeeContainer.appendChild(card);
+                });
+        }
+
+        function getStatusInfo(day) {
+            const status = String(day.狀態 ?? "").trim();
+
+            if (status === "休") {
+                return { text: status, className: "status-rest" };
+            }
+
+            if (status === "異常" || status === "待確認") {
+                return { text: status, className: "status-error" };
+            }
+
+            if (status === "上半天") {
+                return { text: status, className: "status-half" };
+            }
+
+            return { text: status, className: "" };
+        }
+
+        function toSeconds(time) {
+            const parts = String(time).split(":").map(Number);
+
+            if (parts.length !== 3 || parts.some(Number.isNaN)) {
+                return null;
+            }
+
+            return parts[0] * 3600 + parts[1] * 60 + parts[2];
+        }
+
+        function getDisplayTimes(day) {
+            const earliest = String(day.最早時間 ?? "").trim();
+            const latest = String(day.最晚時間 ?? "").trim();
+
+            if (!earliest && !latest) {
+                return { start: "", end: "" };
+            }
+
+            const earliestSeconds = toSeconds(earliest);
+            const latestSeconds = toSeconds(latest);
+
+            if (
+                earliest === latest ||
+                (
+                    earliestSeconds !== null &&
+                    latestSeconds !== null &&
+                    Math.abs(latestSeconds - earliestSeconds) < 3600
+                )
+            ) {
+                const time = Number(latest.slice(0, 2)) <= 14 ? earliest : latest;
+
+                if (Number(time.slice(0, 2)) <= 14) {
+                    return { start: time, end: "" };
+                }
+
+                return { start: "", end: time };
+            }
+
+            return {
+                start: earliest,
+                end: latest
+            };
+        }
+
+        function formatDateWithWeekday(dateStr) {
+            if (!dateStr) return "";
+            const d = new Date(dateStr);
+            if (Number.isNaN(d.getTime())) return String(dateStr);
+            const mm = String(d.getMonth() + 1).padStart(2, "0");
+            const dd = String(d.getDate()).padStart(2, "0");
+            const weekdays = ["日", "一", "二", "三", "四", "五", "六"];
+            const weekday = weekdays[d.getDay()];
+            return `${mm}/${dd}(${weekday})`;
+        }
+
+        function renderAttendance(employee) {
+            const attendance = Array.isArray(employee.出勤) ? employee.出勤 : [];
+            const location = getLocation(employee);
+
+            locationNav.style.display = "none";
+            employeeContainer.innerHTML = "";
+            noResult.style.display = "none";
+
+            resultInfo.textContent =
+                `${currentMonth}｜${employee.員編 ?? ""} ${employee.姓名 ?? ""}`;
+
+            const card = document.createElement("section");
+            card.className = "attendance-card";
+
+            const backButton = createButton(
+                "返回員工列表",
+                "top-back-button",
+                () => {
+                    locationNav.style.display = "flex";
+                    renderLocationNavigation(monthData[currentMonth] || []);
+                    renderEmployeeList(searchInput.value);
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                }
+            );
+
+            const title = document.createElement("h2");
+            title.textContent = `${currentMonth}｜${location}`;
+
+            const employeeInfo = document.createElement("div");
+            employeeInfo.className = "employee-info";
+            employeeInfo.innerHTML = `
+                <div>員工姓名：${escapeHtml(employee.員編)} ${escapeHtml(employee.姓名)}</div>
+                <div>卡號：${escapeHtml(employee.卡號)}　遲到累計：${escapeHtml(employee.遲到累計 ?? 0)} 分鐘</div>
+            `;
+
+            const wrapper = document.createElement("div");
+            wrapper.className = "attendance-wrapper";
+
+            const table = document.createElement("table");
+            table.className = "attendance-table";
+
+            table.innerHTML = `
+                <thead>
+                    <tr>
+                        <th>日期</th>
+                        <th>門別</th>
+                        <th>上班</th>
+                        <th>下班</th>
+                        <th>工時</th>
+                        <th>系統加班</th>
+                        <th>狀態</th>
+                        <th>備註</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            `;
+
+            const tbody = table.querySelector("tbody");
+
+            attendance.forEach((day) => {
+                const status = getStatusInfo(day);
+                const times = getDisplayTimes(day);
+                const hours = day.工時 ?? "";
+                const overtime = day.系統加班 ?? "";
+                const hoursClass =
+                    Number(hours) === 8
+                        ? "work-hours-8"
+                        : Number(hours) === 4
+                            ? "work-hours-4"
+                            : "";
+
+                const row = document.createElement("tr");
+
+                row.innerHTML = `
+                    <td>${escapeHtml(formatDateWithWeekday(day.日期))}</td>
+                    <td>${escapeHtml(day.門別簡稱 ?? day.門別)}</td>
+                    <td>${escapeHtml(times.start)}</td>
+                    <td>${escapeHtml(times.end)}</td>
+                    <td class="${hoursClass}">${escapeHtml(hours)}</td>
+                    <td class="system-overtime">${escapeHtml(overtime)}</td>
+                    <td class="${status.className}">${escapeHtml(status.text)}</td>
+                    <td>${escapeHtml(day.備註)}</td>
+                `;
+
+                tbody.appendChild(row);
+            });
+
+            wrapper.appendChild(table);
+
+            const buttonGroup = document.createElement("div");
+            buttonGroup.className = "button-group";
+
+            const printButton = createButton(
+                "列印工表",
+                "print-button",
+                () => window.print()
+            );
+
+            buttonGroup.appendChild(printButton);
+
+            card.appendChild(backButton);
+            card.appendChild(title);
+            card.appendChild(employeeInfo);
+            card.appendChild(wrapper);
+            card.appendChild(buttonGroup);
+
+            employeeContainer.appendChild(card);
+        }
+
+        searchInput.addEventListener("input", () => {
+            const keyword = searchInput.value;
+            const filtered = filterEmployees(keyword);
+
+            locationNav.style.display = "flex";
+            renderLocationNavigation(filtered);
+            renderEmployeeList(keyword);
+        });
+
+        async function loadData() {
+            try {
+                const entries = await Promise.all(
+                    Object.entries(monthFiles).map(async ([month, fileName]) => {
+                        const response = await fetch(fileName);
+
+                        if (!response.ok) {
+                            throw new Error(`無法讀取 ${fileName}`);
+                        }
+
+                        const data = await response.json();
+
+                        if (!Array.isArray(data)) {
+                            throw new Error(`${fileName} 格式不是陣列`);
+                        }
+
+                        return [month, data];
+                    })
+                );
+
+                monthData = Object.fromEntries(entries);
+                currentMonth = "10月";
+                employeeData = monthData[currentMonth] || [];
+
+                loading.style.display = "none";
+                renderMonthNavigation();
+                renderLocationNavigation(employeeData);
+                renderEmployeeList("");
+            } catch (error) {
+                console.error(error);
+
+                loading.style.display = "none";
+                errorMessage.style.display = "block";
+                errorMessage.textContent =
+                    `資料載入失敗：${error.message}。請確認 HTML 與 JSON 位於同一資料夾。`;
+            }
+        }
+
+        loadData();
+    </script>
+</body>
+</html>
