@@ -11,10 +11,10 @@ import pandas as pd
 folder = Path(__file__).parent
 
 REPORT_YEAR = 2026
-REPORT_MONTH = 10
+REPORT_MONTH = 9
 
-input_filename = "出入歷史紀錄報表10月.xls"
-output_filename = "員工出勤資料_10月.json"
+input_filename = "出入歷史紀錄報表9月.xls"
+output_filename = "員工出勤資料_09月.json"
 
 input_file = folder / input_filename
 output_file = folder / output_filename
@@ -34,13 +34,13 @@ HEAD_OFFICE_GATES = { "10001大門", "11211九樓" }
 
 # 林千惠的個別班表
 # 不加「完整工時」文字標示；
-# 有兩筆以上打卡且涵蓋 09:00–15:30 時，工時記為 8。
+# 有兩筆以上打卡且涵蓋 09:00–15:30 時，正常工時記為 5.5。
 EMPLOYEE_SCHEDULES = {
     "10008": {
         "姓名": "林千惠",
         "上班": "09:00",
         "下班": "15:30",
-        "工時": 8
+        "工時": 5.5
     }
 }
 
@@ -398,7 +398,7 @@ def compute_attendance_fields(
             unit="s"
         )
 
-        # 完整涵蓋個人班表即認列 8 小時
+        # 完整涵蓋個人班表即認列設定的正常工時
         if clock_in <= schedule_start and clock_out >= schedule_end:
             work_hours = schedule["工時"]
         else:
@@ -460,7 +460,7 @@ def compute_attendance_fields(
     if work_hours <= 0:
         status = "異常"
     elif work_hours == 4:
-        status = "上半天"
+        status = "休半天"
     elif work_hours == 5.5:
         status = "待確認"
     else:
@@ -757,6 +757,8 @@ for _, employee in last_info.iterrows():
 
         if status == "休":
             actual_rest_days += 1
+        elif status == "休半天":
+            actual_rest_days += 0.5
 
         attendance.append({
             "日期": date.strftime("%Y/%m/%d"),
