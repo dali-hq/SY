@@ -308,7 +308,7 @@ white-space: normal; overflow-wrap: anywhere; word-break: normal;
                 const dateClass = parseDateParts(day.日期)?.isSunday ? "sunday-date" : "";
                 const startGate = day.上班門別簡稱 || day.上班門別 || "", endGate = day.下班門別簡稱 || day.下班門別 || "";
                 const row = document.createElement("tr");
-                row.innerHTML = `<td class="${dateClass}">${escapeHtml(formatDateWithWeekday(day.日期))}</td><td>${escapeHtml(startGate)}</td><td>${escapeHtml(String(day.最早時間 ?? "").slice(0, 5))}</td><td>${escapeHtml(endGate)}</td><td>${escapeHtml(String(day.最晚時間 ?? "").slice(0, 5))}</td><td class="${hoursClass}">${escapeHtml(hours)}</td><td class="system-overtime">${escapeHtml(overtime)}</td><td class="${status.className}">${escapeHtml(status.text)}</td><td>${escapeHtml(day.備註 ?? "")}</td>`;
+                row.innerHTML = `<td class="${dateClass}">${escapeHtml(formatDateWithWeekday(day.日期))}</td><td>${escapeHtml(startGate)}</td><td>${escapeHtml(day.最早時間 ?? "")}</td><td>${escapeHtml(endGate)}</td><td>${escapeHtml(day.最晚時間 ?? "")}</td><td class="${hoursClass}">${escapeHtml(hours)}</td><td class="system-overtime">${escapeHtml(overtime)}</td><td class="${status.className}">${escapeHtml(status.text)}</td><td>${escapeHtml(day.備註 ?? "")}</td>`;
                 tbody.appendChild(row);
             });
             wrapper.appendChild(table); card.append(title, employeeInfo, wrapper);
