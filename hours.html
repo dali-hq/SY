@@ -299,7 +299,7 @@
                 <div class="summary-row"><span>上班工時：${escapeHtml(Number(totalWorkHours.toFixed(2)))} 小時</span><span>系統加班：${escapeHtml(employee.系統加班累計 ?? 0)} 小時</span><span>遲到累計：${escapeHtml(employee.遲到累計 ?? 0)} 分鐘</span></div>`;
             const wrapper = document.createElement("div"); wrapper.className = "attendance-wrapper";
             const table = document.createElement("table"); table.className = "attendance-table";
-            table.innerHTML = `<thead><tr><th>日期</th><th>上班門別</th><th>上班</th><th>下班門別</th><th>下班</th><th>工時</th><th>系統加班</th><th>狀態</th><th>備註</th></tr></thead><tbody></tbody>`;
+            table.innerHTML = `<thead><tr><th>日期</th><th>上班門別</th><th>上班</th><th>下班門別</th><th>下班</th><th>工時</th><th>7／18</th><th>狀態</th><th>備註</th></tr></thead><tbody></tbody>`;
             const tbody = table.querySelector("tbody");
             attendance.forEach(day => {
                 const status = getStatusInfo(day), hours = day.工時 ?? "", overtime = day.系統加班 ?? "";
