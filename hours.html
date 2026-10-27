@@ -325,7 +325,7 @@ tr { break-inside: avoid; page-break-inside: avoid; }
             }, 0);
             employeeInfo.innerHTML = `
                 <div class="summary-row"><span>員工姓名：${escapeHtml(employee.員編)} ${escapeHtml(employee.姓名)} ${createAbnormalityDot(employee)}</span></div>
-                <div class="summary-row"><span>應休天數：${escapeHtml(employee.應休天數 ?? "")} 天</span><span>已休假：${escapeHtml(employee.已休假 ?? "0天")}</span><span>未休假：${escapeHtml(employee.未休假 ?? "0天")}</span></div>
+                <div class="summary-row"><span>應休：${escapeHtml(employee.應休時數 ?? Number(employee.應休天數 ?? 0) * 8)} 小時</span><span>已休：${escapeHtml(employee.已休時數 ?? 0)} 小時</span><span>未休：${escapeHtml(employee.未休時數 ?? 0)} 小時</span></div>
                 <div class="summary-row"><span>上班工時：${escapeHtml(Number(totalWorkHours.toFixed(2)))} 小時</span><span>系統加班：${escapeHtml(employee.系統加班累計 ?? 0)} 小時</span>${Number(employee.遲到累計 ?? 0) > 0 ? `<span>遲到累計：${escapeHtml(employee.遲到累計)} 分鐘</span>` : ""}</div>`;
             const wrapper = document.createElement("div"); wrapper.className = "attendance-wrapper";
             const table = document.createElement("table"); table.className = "attendance-table";
