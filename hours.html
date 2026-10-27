@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="./clock.png">
+    <title>實毅員工出勤-beta</title>
+    <style>
+* { box-sizing: border-box; }
+body { margin: 0; padding: 24px; background: #F0EDE7; color: #38352F; font-family: Arial, "Microsoft JhengHei", sans-serif; font-size: 18px; }
+.container { max-width: 1500px; margin: 0 auto; }
+h1 { margin: 0 0 18px; color: #1f4e79; text-align: center; font-size: 28px; }
+.month-nav { display: flex; justify-content: center; gap: 14px; margin: 16px 0; }
+.month-button, .location-link, .top-back-button, .print-button { border: 0; border-radius: 6px; cursor: pointer; font-family: inherit; }
+.month-button { min-width: 82px; padding: 10px 18px; border: 1px solid #90a4ae; background: #fff; color: #1f4e79; font-size: 18px; }
+.month-button:hover, .month-button.active { border-color: #1f4e79; background: #1f4e79; color: #fff; }
+.search-box { margin: 20px 0 16px; }
+#searchInput { width: 100%; padding: 12px 16px; border: 1px solid #b0bec5; border-radius: 8px; background: #fff; font-size: 16px; }
+#searchInput:focus { outline: none; border-color: #1976d2; box-shadow: 0 0 0 3px rgba(25, 118, 210, .15); }
+.location-nav { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; padding: 12px; border: 1px solid #d8e0e5; border-radius: 8px; background: #fff; }
+.location-nav-title { width: 100%; color: #455a64; font-size: 15px; font-weight: bold; }
+.location-link { padding: 8px 12px; border: 1px solid #90a4ae; background: #f8fafb; color: #1f4e79; font-size: 14px; }
+.location-link:hover, .location-link.active { border-color: #1f4e79; background: #1f4e79; color: #fff; }
+#resultInfo { margin: 14px 0; color: #607d8b; font-size: 15px; }
+#loading, #noResult, #errorMessage { padding: 20px; border-radius: 8px; text-align: center; }
+#loading { color: #607d8b; }
+#noResult { display: none; background: #fff; color: #78909c; }
+#errorMessage { display: none; background: #ffebee; color: #b71c1c; white-space: pre-wrap; }
+.employee-alert-dot { display: inline-block; width: 9px; height: 9px; margin-left: 6px; border-radius: 50%; background: #f57c00; vertical-align: middle; }
+.employee-alert-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
+.location-card, .attendance-card { margin-bottom: 20px; overflow: hidden; border-radius: 10px; background: #EFE9DD; box-shadow: 0 2px 8px rgba(0,0,0,.08); }
+.location-card { scroll-margin-top: 20px; }
+.location-title { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 16px; background: #1f4e79; color: #fff; font-size: 20px; font-weight: bold; }
+.employee-grid { display: grid; grid-template-columns: repeat(8,minmax(120px,1fr)); gap: 10px; padding: 16px; }
+.employee-item { display: block; padding: 12px 8px; border: 1px solid #988A71; border-radius: 6px; background: #E2D6C2; color: #38352F; text-align: center; text-decoration: none; font-size: 15px; }
+.employee-item:hover { border-color: #8E3A59; background: #DDADAF; color: #302B23; }
+.attendance-card { padding: 20px; }
+.top-back-button { margin-bottom: 16px; padding: 10px 16px; background: #1f4e79; color: #fff; font-size: 15px; }
+.attendance-card h2 { margin: 0 0 12px; color: #1f4e79; font-size: 22px; background: transparent; }
+.employee-info { display: grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap: 4px 16px; margin-bottom: 18px; line-height: 1.7; font-size: 16px; }
+.attendance-wrapper { width: 100%; overflow-x: auto; border: 1px solid #4C5159; }
+.attendance-table { width: 100%; min-width: 900px; border-collapse: collapse; table-layout: fixed; background: #FAF7EF; }
+.attendance-table th, .attendance-table td { padding: 9px 5px; border: 1px solid #4C5159; text-align: center; overflow-wrap: anywhere; font-size: 14px; padding-left: 2px; padding-right: 2px; }
+.attendance-table th { background: #FAF7EF; color: #1f4e79; }
+.sunday-date { background: #c6d5d0 !important; color: #333333; }
+.status-rest { color: #575757; }
+.status-error { color: #c62828; font-weight: bold; }
+.status-half, .work-hours-4 { color: #ef6c00; font-weight: bold; }
+.work-hours-8 { color: #2e7d32; font-weight: bold; }
+.system-overtime { color: #1565c0; font-weight: bold; }
+.button-group { display: flex; gap: 10px; margin-top: 18px; }
+.print-button { padding: 10px 16px; background: #2e7d32; color: #fff; font-size: 15px; }
+.attendance-card .employee-info { display: block !important; margin-bottom: 16px; }
+.summary-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 56px; margin-bottom: 6px; }
+.summary-row > span { white-space: nowrap; }
+.summary-row:nth-child(2) { margin-bottom: 10px; }
+.attendance-card .attendance-heading { display: flex !important; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; width: 100%; background: transparent; }
+.attendance-heading > span:first-child { white-space: nowrap; }
+.attendance-card .heading-notice { color: #c62828; font-size: 15px; font-weight: normal; line-height: 1.5; }
+.attendance-card .attendance-heading .heading-notice { display: block !important; flex: 0 1 auto; min-width: 0; max-width: 100%; margin-left: auto; color: #c62828 !important; font-size: 15px !important; font-weight: normal !important; line-height: 1.5 !important; text-align: right; background: transparent !important; }
+.location-title .location-count { margin-left: auto; flex-shrink: 0; font-size: 16px; white-space: nowrap; }
+.attendance-table th:nth-child(1), .attendance-table td:nth-child(1),
+.attendance-table th:nth-child(8), .attendance-table td:nth-child(8),
+.attendance-table td:nth-child(3), .attendance-table td:nth-child(5) { white-space: nowrap; overflow-wrap: normal; word-break: normal; }
+.attendance-table th:nth-child(2), .attendance-table td:nth-child(2),
+.attendance-table th:nth-child(4), .attendance-table td:nth-child(4) { white-space: normal; overflow-wrap: anywhere; word-break: normal; }
+.attendance-table .col-date, .attendance-table .col-status { width: 12%; }
+.attendance-table .col-gate { width: 8%; }
+.attendance-table .col-time { width: 11%; }
+.attendance-table .col-hours, .attendance-table .col-overtime { width: 8%; }
+.attendance-table .col-notes { width: 22%; }
+/* 工地異常紀錄：小巧、低調 */
+.abnormal-record-button {
+    flex-shrink: 0;
+    padding: 4px 8px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.5);
+    color: #38352F;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: normal;
+    line-height: 1.4;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color 0.15s ease,
+                border-color 0.15s ease;
+}
+
+.abnormal-record-button:hover,
+.abnormal-record-button:focus-visible {
+    background: rgba(255, 255, 255, 0.8);
+    border-color: rgba(255, 255, 255, 0.6);
+}
+
+.abnormal-record-button:focus-visible {
+    outline: 2px solid #38352F;
+    outline-offset: 2px;
+}
+@page { size: A4 portrait; margin: 8mm; }
+@media (max-width: 1000px) {
+.employee-grid { grid-template-columns: repeat(4,minmax(140px,1fr)); }
+}
+@media (max-width: 700px) {
+.location-title { flex-wrap: wrap; }
+}
+@media (max-width: 600px) {
+body { padding: 12px; }
+.employee-grid { grid-template-columns: repeat(2,minmax(120px,1fr)); }
+.attendance-card { padding: 12px; }
+}
+@media print {
+body { padding: 0; background: #fff; font-size: 11px; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+.container { max-width: 100%; padding: 0; }
+h1, .month-nav, .search-box, .location-nav, #resultInfo, .top-back-button, .button-group, #loading, #noResult, #errorMessage { display: none !important; }
+.attendance-card { margin: 0; padding: 0; overflow: visible; border-radius: 0; box-shadow: none; }
+.attendance-card h2 { margin: 0 0 6px; font-size: 15px; }
+.employee-info { grid-template-columns: repeat(2,1fr); gap: 0 10px; margin-bottom: 6px; line-height: 1.4; font-size: 10px; }
+.attendance-wrapper { overflow: visible; border: none; }
+.attendance-table { width: 100%; min-width: 0; table-layout: fixed; background: #fff; }
+.attendance-table th, .attendance-table td { padding: 1px; border: 1px solid #555555 !important; font-size: 14px !important; line-height: 1.4; overflow-wrap: anywhere; height: 30px; }
+.sunday-date { background: #eee !important; color: #424242 !important; }
+tr { break-inside: avoid; page-break-inside: avoid; }
+.attendance-card, .attendance-card * { font-size: 14px !important; }
+.attendance-table th { background: #ffffff !important; }
+.attendance-card .employee-info { display: block !important; break-inside: avoid; }
+.attendance-card .employee-info, .attendance-card .employee-info * { font-size: 12px !important; }
+.employee-info .summary-row { display: flex; flex-wrap: wrap; column-gap: 16mm !important; row-gap: 2mm !important; margin-bottom: 1mm; line-height: 1.5; }
+.employee-info .summary-row:nth-child(2) { margin-bottom: 3mm !important; }
+.attendance-card .attendance-heading { gap: 3px 10px; }
+.attendance-card .attendance-heading .heading-notice { font-size: 14px !important; }
+.location-card, .attendance-card, .attendance-table { background: #fff !important; }
+}
+.report-toolbar { display: flex; gap: 10px; flex-wrap: wrap; margin: 12px 0; }
+.abnormal-report { margin-bottom: 24px; padding: 16px; background: #fff; border-radius: 8px; }
+.abnormal-report h2 { margin: 0 0 12px; font-size: 20px; color: #1f4e79; }
+.abnormal-table { width: 100%; min-width: 900px; border-collapse: collapse; table-layout: fixed; font-size: 14px; }
+.abnormal-table th, .abnormal-table td { border: 1px solid #555; padding: 8px 3px; text-align: center; overflow-wrap: anywhere; }
+.abnormal-table th { background: #EFE9DD; }
+.abnormal-table td:nth-child(5), .abnormal-table td:nth-child(6) { white-space: nowrap; }
+.abnormal-table td:last-child { height: 36px; }
+@media print {
+    .report-toolbar { display: none !important; }
+    .abnormal-report { padding: 0; margin: 0; border-radius: 0; break-before: page; }
+    .abnormal-report:first-of-type { break-before: auto; }
+    .abnormal-report h2 { font-size: 16px; }
+    .abnormal-table { min-width: 0; font-size: 12px; }
+    .abnormal-table th, .abnormal-table td { padding: 5px 2px; }
+    .abnormal-table thead { display: table-header-group; }
+}
+
+</style>
+</head>
+<body>
+    <main class="container">
+        <h1>實毅員工出勤-beta</h1>
+        <div id="monthNav" class="month-nav"></div>
+        <div class="search-box"><input id="searchInput" type="search" placeholder="請輸入員編或姓名" autocomplete="off"></div>
+        <div id="locationNav" class="location-nav"></div>
+        <div id="resultInfo"></div>
+        <div id="loading">載入出勤資料中...</div>
+        <div id="errorMessage"></div>
+        <div id="employeeContainer"></div>
+        <div id="noResult">查無符合條件的員工資料。</div>
+    </main>
+    <script>
+        const monthFiles = { "9月": "員工出勤資料_09月.json", "10月": "員工出勤資料_10月.json" };
+        let currentMonth = "10月";
+        let monthData = {};
+        let employeeData = [];
+        let currentView = "list";
+        let listScrollY = 0;
+        let returnAction = null;
+        const monthNav = document.getElementById("monthNav");
+        const searchInput = document.getElementById("searchInput");
+        const locationNav = document.getElementById("locationNav");
+        const resultInfo = document.getElementById("resultInfo");
+        const loading = document.getElementById("loading");
+        const errorMessage = document.getElementById("errorMessage");
+        const employeeContainer = document.getElementById("employeeContainer");
+        const noResult = document.getElementById("noResult");
+
+        function escapeHtml(value) {
+            return String(value ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+        function hasMonthlyAbnormality(employee) {
+            const attendance = Array.isArray(employee.出勤) ? employee.出勤 : [];
+            return attendance.some(day => {
+                const status = String(day.狀態 ?? "").trim();
+                return status === "異常" || status === "異常/判休";
+            });
+        }
+        function createAbnormalityDot(employee) {
+            if (!hasMonthlyAbnormality(employee)) return "";
+            return `<span class="employee-alert-dot" aria-hidden="true"></span><span class="employee-alert-label">本月有異常</span>`;
+        }
+        function switchMonth(month) {
+            currentMonth = month;
+            employeeData = monthData[month] || [];
+            searchInput.value = "";
+            locationNav.style.display = "flex";
+            renderMonthNavigation();
+            renderLocationNavigation(employeeData);
+            renderEmployeeList("");
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+        function getLocation(employee) { return employee.顯示門別 || employee.門別 || "未分類"; }
+        function sortEmployees(list) {
+            return [...list].sort((a, b) => {
+                const cmp = getLocation(a).localeCompare(getLocation(b), "zh-Hant");
+                return cmp || String(a.員編 ?? "").localeCompare(String(b.員編 ?? ""), "zh-Hant", { numeric: true });
+            });
+        }
+        function createButton(text, className, clickHandler) {
+            const button = document.createElement("button");
+            button.type = "button"; button.className = className; button.textContent = text;
+            button.addEventListener("click", clickHandler); return button;
+        }
+        function renderMonthNavigation() {
+            monthNav.innerHTML = "";
+            Object.keys(monthFiles).forEach(month => monthNav.appendChild(createButton(month, `month-button ${month === currentMonth ? "active" : ""}`, () => switchMonth(month))));
+            monthNav.appendChild(createButton("各工地異常紀錄", "month-button", () => openAbnormalReport()));
+        }
+        function renderLocationNavigation(list) {
+            locationNav.innerHTML = "";
+            const title = document.createElement("div"); title.className = "location-nav-title"; title.textContent = "門別快速前往"; locationNav.appendChild(title);
+            const locations = [...new Set(list.map(getLocation))].filter(Boolean).sort((a,b) => a.localeCompare(b,"zh-Hant"));
+            locations.forEach(location => {
+                const button = createButton(location, "location-link", () => {
+                    const target = [...document.querySelectorAll(".location-card")].find(card => card.dataset.location === location);
+                    if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+                    document.querySelectorAll(".location-link").forEach(item => item.classList.remove("active")); button.classList.add("active");
+                });
+                locationNav.appendChild(button);
+            });
+        }
+        function filterEmployees(keyword) {
+            const key = keyword.trim().toLowerCase();
+            if (!key) return employeeData;
+            return employeeData.filter(employee => String(employee.員編 ?? "").toLowerCase().includes(key) || String(employee.姓名 ?? "").toLowerCase().includes(key));
+        }
+        function renderEmployeeList(keyword) {
+            currentView = "list";
+            returnAction = null;
+            const filtered = sortEmployees(filterEmployees(keyword));
+            employeeContainer.innerHTML = "";
+            noResult.style.display = filtered.length ? "none" : "block";
+            resultInfo.textContent = `${currentMonth}：共 ${filtered.length} 位員工`;
+            if (!filtered.length) return;
+            const grouped = {};
+            filtered.forEach(employee => { const location = getLocation(employee); (grouped[location] ||= []).push(employee); });
+            Object.keys(grouped).sort((a,b) => a.localeCompare(b,"zh-Hant")).forEach(location => {
+                const card = document.createElement("section"); card.className = "location-card"; card.dataset.location = location;
+                const title = document.createElement("div"); title.className = "location-title";
+                const titleText = document.createElement("span"); titleText.textContent = location;
+                const gateColors = [
+                    ["北港", "#356B78", "#FFFFFF"],
+                    ["大里", "#8C4545", "#FFFFFF"],
+                    ["南科", "#486B52", "#FFFFFF"],
+                    ["嘉義", "#6B567F", "#FFFFFF"],
+                    ["總公司", "#806B32", "#FFFFFF"]
+                ];
+                const gateColor = gateColors.find(([name]) => location.includes(name));
+                if (gateColor) {
+                    title.style.backgroundColor = gateColor[1];
+                    title.style.color = gateColor[2];
+                }
+                const total = employeeData.filter(employee => getLocation(employee) === location).length;
+                const visible = grouped[location].length;
+                const count = document.createElement("span");
+                count.className = "location-count";
+                count.textContent = String(keyword || "").trim()
+                    ? `符合 ${visible}／共 ${total} 人` : `共 ${total} 人`;
+                title.append(titleText, count);
+                const abnormalCount = grouped[location].reduce((sum, employee) => sum + (employee.出勤 || []).filter(isAbnormalDay).length, 0);
+                title.appendChild(createButton(
+                    `異常紀錄（${abnormalCount}）`, "abnormal-record-button", () => openAbnormalReport(location)
+                ));
+                const grid = document.createElement("div"); grid.className = "employee-grid";
+                sortEmployees(grouped[location]).forEach(employee => {
+                    const item = document.createElement("a"); item.href = "#"; item.className = "employee-item";
+                    item.innerHTML = `${escapeHtml(employee.員編)} ${escapeHtml(employee.姓名)}${createAbnormalityDot(employee)}`;
+                    item.addEventListener("click", event => { event.preventDefault(); listScrollY = window.scrollY; renderAttendance(employee); }); grid.appendChild(item);
+                });
+                card.append(title, grid); employeeContainer.appendChild(card);
+            });
+        }
+        function getStatusInfo(day) {
+            const status = String(day.狀態 ?? "").trim();
+            if (status === "休") return { text: status, className: "status-rest" };
+            if (status === "異常" || status === "待確認") return { text: status, className: "status-error" };
+            if (status === "休半天" || status === "上半天") return { text: "休半天", className: "status-half" };
+            return { text: status, className: "" };
+        }
+        function parseDateParts(dateStr) {
+            const match = String(dateStr ?? "").match(/^(\d{4})\/(\d{1,2})\/(\d{1,2})$/);
+            if (!match) return null;
+            const year = Number(match[1]), month = Number(match[2]), day = Number(match[3]);
+            const date = new Date(year, month - 1, day);
+            return { year, month, day, date, isSunday: date.getDay() === 0 };
+        }
+        function formatDateWithWeekday(dateStr) {
+            const parts = parseDateParts(dateStr); if (!parts) return String(dateStr ?? "");
+            const weekdays = ["日", "一", "二", "三", "四", "五", "六"];
+            return `${String(parts.month).padStart(2,"0")}/${String(parts.day).padStart(2,"0")}(${weekdays[parts.date.getDay()]})`;
+        }
+        function renderAttendance(employee, options = {}) {
+            const { forPdf = false } = options;
+            const attendance = Array.isArray(employee.出勤) ? employee.出勤 : [];
+            const location = getLocation(employee);
+            const card = document.createElement("section");
+            card.className = forPdf ? "attendance-card pdf-export-card" : "attendance-card";
+            const title = document.createElement("h2");
+            title.className = "attendance-heading";
+            const headingText = document.createElement("span");
+            headingText.textContent = `${currentMonth}｜${location}`;
+            const headingNotice = document.createElement("span");
+            headingNotice.className = "heading-notice";
+            headingNotice.textContent = "（#出勤資料僅供參考，忘卡/加班需自行申請，以公司核定為主。）";
+            title.append(headingText, headingNotice);
+            const employeeInfo = document.createElement("div"); employeeInfo.className = "employee-info";
+            const totalWorkHours = attendance.reduce((sum, day) => {
+                const hours = Number(day.工時);
+                return sum + (Number.isFinite(hours) ? hours : 0);
+            }, 0);
+            employeeInfo.innerHTML = `
+                <div class="summary-row"><span>員工姓名：${escapeHtml(employee.員編)} ${escapeHtml(employee.姓名)} ${createAbnormalityDot(employee)}</span></div>
+                <div class="summary-row"><span>應休天數：${escapeHtml(employee.應休天數 ?? "")} 天</span><span>已休假：${escapeHtml(employee.已休假 ?? "0天")}</span><span>未休假：${escapeHtml(employee.未休假 ?? "0天")}</span></div>
+                <div class="summary-row"><span>上班工時：${escapeHtml(Number(totalWorkHours.toFixed(2)))} 小時</span><span>系統加班：${escapeHtml(employee.系統加班累計 ?? 0)} 小時</span>${Number(employee.遲到累計 ?? 0) > 0 ? `<span>遲到累計：${escapeHtml(employee.遲到累計)} 分鐘</span>` : ""}</div>`;
+            const wrapper = document.createElement("div"); wrapper.className = "attendance-wrapper";
+            const table = document.createElement("table"); table.className = "attendance-table";
+            table.innerHTML = `<colgroup><col class="col-date"><col class="col-gate"><col class="col-time"><col class="col-gate"><col class="col-time"><col class="col-hours"><col class="col-overtime"><col class="col-status"><col class="col-notes"></colgroup><thead><tr><th>日期</th><th>上班門</th><th>上班</th><th>下班門</th><th>下班</th><th>工時</th><th>7／18</th><th>狀態</th><th>備註</th></tr></thead><tbody></tbody>`;
+            const tbody = table.querySelector("tbody");
+            attendance.forEach(day => {
+                const status = getStatusInfo(day), hours = day.工時 ?? "", overtime = day.系統加班 ?? "";
+                const hoursClass = Number(hours) === 8 ? "work-hours-8" : Number(hours) === 4 ? "work-hours-4" : "";
+                const dateClass = parseDateParts(day.日期)?.isSunday ? "sunday-date" : "";
+                const startGate = day.上班門別簡稱 || day.上班門別 || "", endGate = day.下班門別簡稱 || day.下班門別 || "";
+                const row = document.createElement("tr");
+                row.innerHTML = `<td class="${dateClass}">${escapeHtml(formatDateWithWeekday(day.日期))}</td><td>${escapeHtml(startGate)}</td><td>${escapeHtml(day.最早時間 ?? "")}</td><td>${escapeHtml(endGate)}</td><td>${escapeHtml(day.最晚時間 ?? "")}</td><td class="${hoursClass}">${escapeHtml(hours)}</td><td class="system-overtime">${escapeHtml(overtime)}</td><td class="${status.className}">${escapeHtml(status.text)}</td><td>${escapeHtml(day.備註 ?? "")}</td>`;
+                tbody.appendChild(row);
+            });
+            wrapper.appendChild(table); card.append(title, employeeInfo, wrapper);
+            if (!forPdf) {
+                currentView = "attendance";
+                locationNav.style.display = "none"; employeeContainer.innerHTML = ""; noResult.style.display = "none";
+                resultInfo.textContent = `${currentMonth}｜${employee.員編 ?? ""} ${employee.姓名 ?? ""}`;
+                const backButton = createButton("返回員工列表", "top-back-button", () => {
+                    locationNav.style.display = "flex";
+                    renderLocationNavigation(filterEmployees(searchInput.value));
+                    renderEmployeeList(searchInput.value);
+                    requestAnimationFrame(() => {
+                        const target = [...document.querySelectorAll(".location-card")]
+                            .find(item => item.dataset.location === location);
+                        document.querySelectorAll(".location-link").forEach(button => {
+                            button.classList.toggle("active", button.textContent === location);
+                        });
+                        window.scrollTo({ top: listScrollY, behavior: "auto" });
+                    });
+                });
+                const buttonGroup = document.createElement("div"); buttonGroup.className = "button-group";
+                buttonGroup.appendChild(createButton("列印工表", "print-button", () => window.print()));
+                returnAction = () => backButton.click();
+                card.prepend(backButton); card.appendChild(buttonGroup); employeeContainer.appendChild(card);
+            }
+            return card;
+        }
+        searchInput.addEventListener("input", () => {
+            const keyword = searchInput.value, filtered = filterEmployees(keyword);
+            locationNav.style.display = "flex"; renderLocationNavigation(filtered); renderEmployeeList(keyword);
+        });
+        function showLoadedData() {
+            if (!monthData[currentMonth]) currentMonth = Object.keys(monthData)[0];
+            employeeData = monthData[currentMonth] || [];
+            searchInput.value = "";
+            loading.style.display = "none";
+            errorMessage.style.display = "none";
+            locationNav.style.display = "flex";
+            renderMonthNavigation(); renderLocationNavigation(employeeData); renderEmployeeList("");
+        }
+        async function loadData() {
+            const results = await Promise.allSettled(Object.entries(monthFiles).map(async ([month, fileName]) => {
+                const response = await fetch(fileName);
+                if (!response.ok) throw new Error(`無法讀取 ${fileName}`);
+                const data = await response.json();
+                if (!Array.isArray(data)) throw new Error(`${fileName} 格式不是陣列`);
+                return [month, data];
+            }));
+            const entries = results.filter(r => r.status === "fulfilled").map(r => r.value);
+            if (entries.length) {
+                monthData = Object.fromEntries(entries);
+                showLoadedData();
+            } else {
+                loading.style.display = "none";
+                errorMessage.style.display = "block";
+                errorMessage.textContent = "無法自動載入資料，請確認 JSON 檔名與位置。網站請透過 HTTP／HTTPS 開啟；本機批量 PDF 請使用 batch_attendance_pdf.py。";
+            }
+        }
+
+        function isAbnormalDay(day) {
+            const status = String(day.狀態 ?? "").trim().replace(/／/g, "/");
+            return status === "異常" || status === "異常/判休";
+        }
+        function returnToEmployeeList() {
+            locationNav.style.display = "flex";
+            renderLocationNavigation(filterEmployees(searchInput.value));
+            renderEmployeeList(searchInput.value);
+            requestAnimationFrame(() => window.scrollTo({ top: listScrollY, behavior: "auto" }));
+        }
+        function openAbnormalReport(location = null) {
+            if (currentView === "list") listScrollY = window.scrollY;
+            currentView = "abnormal";
+            returnAction = returnToEmployeeList;
+            employeeContainer.innerHTML = "";
+            locationNav.style.display = "none";
+            noResult.style.display = "none";
+            const records = [];
+            sortEmployees(employeeData).forEach(employee => {
+                if (location !== null && getLocation(employee) !== location) return;
+                (Array.isArray(employee.出勤) ? employee.出勤 : []).filter(isAbnormalDay).forEach(day => records.push({ employee, day }));
+            });
+            records.sort((a, b) => getLocation(a.employee).localeCompare(getLocation(b.employee), "zh-Hant") || String(a.day.日期).localeCompare(String(b.day.日期)) || String(a.employee.員編).localeCompare(String(b.employee.員編), "zh-Hant", { numeric: true }));
+            resultInfo.textContent = `${currentMonth}｜${location ?? "各工地"}異常紀錄：共 ${records.length} 筆（不含休）`;
+            const toolbar = document.createElement("div");
+            toolbar.className = "report-toolbar";
+            toolbar.append(createButton("返回員工列表", "top-back-button", returnToEmployeeList), createButton("列印異常紀錄", "print-button", () => window.print()));
+            employeeContainer.appendChild(toolbar);
+            if (!records.length) {
+                const empty = document.createElement("p"); empty.textContent = "本月沒有符合條件的異常紀錄。";
+                employeeContainer.appendChild(empty);
+            }
+            const grouped = new Map();
+            records.forEach(record => {
+                const site = getLocation(record.employee);
+                if (!grouped.has(site)) grouped.set(site, []);
+                grouped.get(site).push(record);
+            });
+            grouped.forEach((items, site) => {
+                const section = document.createElement("section"); section.className = "abnormal-report";
+                const title = document.createElement("h2"); title.textContent = `${currentMonth}｜${site}｜異常紀錄 ${items.length} 筆`;
+                const note = document.createElement("p"); note.textContent = "僅列系統異常；出勤資料僅供參考，以公司核定為主。工地依員工所屬門別分組。";
+                const wrapper = document.createElement("div"); wrapper.className = "attendance-wrapper";
+                const table = document.createElement("table"); table.className = "abnormal-table";
+                table.innerHTML = '<colgroup><col style="width:8%"><col style="width:12%"><col style="width:13%"><col style="width:12%"><col style="width:11%"><col style="width:11%"><col style="width:7%"><col style="width:12%"><col style="width:14%"></colgroup><thead><tr><th>工號</th><th>姓名</th><th>門別／工地</th><th>日期</th><th>上班</th><th>下班</th><th>筆數</th><th>異常狀態</th><th>備註</th></tr></thead><tbody></tbody>';
+                items.forEach(({ employee, day }) => {
+                    const row = document.createElement("tr");
+                    const values = [employee.員編, employee.姓名, site, formatDateWithWeekday(day.日期), day.最早時間, day.最晚時間, day.打卡筆數, day.狀態, ""];
+                    values.forEach(value => { const td = document.createElement("td"); td.textContent = value ?? ""; row.appendChild(td); });
+                    table.tBodies[0].appendChild(row);
+                });
+                wrapper.appendChild(table); section.append(title, note, wrapper); employeeContainer.appendChild(section);
+            });
+            window.scrollTo({ top: 0, behavior: "auto" });
+        }
+        document.addEventListener("keydown", event => {
+            if (event.key !== "Backspace" || event.defaultPrevented || event.isComposing || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+            const target = event.target;
+            if (target instanceof Element && (target.closest("input, textarea, select, [role='textbox']") || target.isContentEditable)) return;
+            if (typeof returnAction === "function") { event.preventDefault(); returnAction(); }
+        });
+
+        loadData();
+    </script>
+</body>
+</html>
