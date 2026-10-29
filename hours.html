@@ -481,7 +481,7 @@ tr { break-inside: avoid; page-break-inside: avoid; }
             grouped.forEach((items, site) => {
                 const section = document.createElement("section"); section.className = "abnormal-report";
                 const title = document.createElement("h2"); title.textContent = `${currentMonth}｜${site}｜${label} ${items.length} 筆`;
-                const note = document.createElement("p"); note.textContent = `${isLeave ? "僅列系統標示「休」的紀錄。" : "僅列系統異常"}；出勤資料以公司核定為主。工地依員工所屬門別分組。`;
+                const note = document.createElement("p"); note.textContent = `${isLeave ? "僅列系統標示「休」的紀錄。" : "僅列系統異常"}出勤資料以公司核定為主。工地依員工所屬門別分組。`;
                 const wrapper = document.createElement("div"); wrapper.className = "attendance-wrapper";
                 const table = document.createElement("table"); table.className = "abnormal-table";
                 table.innerHTML = '<colgroup><col style="width:8%"><col style="width:11%"><col style="width:12%"><col style="width:11%"><col style="width:11%"><col style="width:11%"><col style="width:6%"><col style="width:16%"><col style="width:14%"></colgroup><thead><tr><th>工號</th><th>姓名</th><th>門別／工地</th><th>日期</th><th>上班</th><th>下班</th><th>筆數</th><th>異常狀態</th><th>備註</th></tr></thead><tbody></tbody>';
