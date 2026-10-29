@@ -18,7 +18,7 @@ h1 { margin: 0 0 18px; color: #1f4e79; text-align: center; font-size: 28px; }
 #searchInput { width: 100%; padding: 12px 16px; border: 1px solid #b0bec5; border-radius: 8px; background: #fff; font-size: 16px; }
 #searchInput:focus { outline: none; border-color: #1976d2; box-shadow: 0 0 0 3px rgba(25, 118, 210, .15); }
 .location-nav { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; padding: 12px; border: 1px solid #d8e0e5; border-radius: 8px; background: #fff; }
-.location-nav-title { width: 100%; color: #455a64; font-size: 15px; font-weight: bold; }
+.location-nav-title { flex: 0 0 auto; color: #455a64; font-size: 15px; font-weight: bold; }
 .location-link { padding: 8px 12px; border: 1px solid #90a4ae; background: #f8fafb; color: #1f4e79; font-size: 14px; }
 .location-link:hover, .location-link.active { border-color: #1f4e79; background: #1f4e79; color: #fff; }
 #resultInfo { margin: 14px 0; color: #607d8b; font-size: 15px; }
@@ -51,7 +51,7 @@ h1 { margin: 0 0 18px; color: #1f4e79; text-align: center; font-size: 28px; }
 .button-group { display: flex; gap: 10px; margin-top: 18px; }
 .print-button { padding: 10px 16px; background: #2e7d32; color: #fff; font-size: 15px; }
 .attendance-card .employee-info { display: block !important; margin-bottom: 16px; }
-.summary-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 56px; margin-bottom: 6px; }
+.summary-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 20px; margin-bottom: 6px; }
 .summary-row > span { white-space: nowrap; }
 .summary-row:nth-child(2) { margin-bottom: 10px; }
 .attendance-card .attendance-heading { display: flex !important; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; width: 100%; background: transparent; }
@@ -64,11 +64,12 @@ h1 { margin: 0 0 18px; color: #1f4e79; text-align: center; font-size: 28px; }
 .attendance-table td:nth-child(3), .attendance-table td:nth-child(5) { white-space: nowrap; overflow-wrap: normal; word-break: normal; }
 .attendance-table th:nth-child(2), .attendance-table td:nth-child(2),
 .attendance-table th:nth-child(4), .attendance-table td:nth-child(4) { white-space: normal; overflow-wrap: anywhere; word-break: normal; }
-.attendance-table .col-date, .attendance-table .col-status { width: 12%; }
+.attendance-table .col-date { width: 12%; }
+.attendance-table .col-status { width: 16%; }
 .attendance-table .col-gate { width: 8%; }
 .attendance-table .col-time { width: 11%; }
 .attendance-table .col-hours, .attendance-table .col-overtime { width: 8%; }
-.attendance-table .col-notes { width: 22%; }
+.attendance-table .col-notes { width: 18%; }
 /* 工地異常紀錄：小巧、低調 */
 .abnormal-record-button {
     flex-shrink: 0;
@@ -125,7 +126,7 @@ tr { break-inside: avoid; page-break-inside: avoid; }
 .attendance-table th { background: #ffffff !important; }
 .attendance-card .employee-info { display: block !important; break-inside: avoid; }
 .attendance-card .employee-info, .attendance-card .employee-info * { font-size: 12px !important; }
-.employee-info .summary-row { display: flex; flex-wrap: wrap; column-gap: 16mm !important; row-gap: 2mm !important; margin-bottom: 1mm; line-height: 1.5; }
+.employee-info .summary-row { display: flex; flex-wrap: wrap; column-gap: 4mm !important; row-gap: 2mm !important; margin-bottom: 1mm; line-height: 1.5; }
 .employee-info .summary-row:nth-child(2) { margin-bottom: 3mm !important; }
 .attendance-card .attendance-heading { gap: 3px 10px; }
 .attendance-card .attendance-heading .heading-notice { font-size: 14px !important; }
@@ -149,6 +150,38 @@ tr { break-inside: avoid; page-break-inside: avoid; }
     .abnormal-table thead { display: table-header-group; }
 }
 
+
+.employee-info .summary-row:nth-child(2) { flex-wrap: nowrap; overflow-x: auto; }
+/* 應休～系統加班：平均分配欄寬 */
+.attendance-card .employee-info .summary-row:nth-child(2) {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    column-gap: 0;
+    width: 100%;
+    overflow-x: auto;
+}
+
+.attendance-card .employee-info .summary-row:nth-child(2) > span {
+    min-width: 0;
+    padding-right: 6px;
+    text-align: left;
+    white-space: nowrap;
+}
+
+/* 列印時同樣均分，不再使用原本的固定欄距 */
+@media print {
+    .attendance-card .employee-info .summary-row:nth-child(2) {
+        display: grid;
+        column-gap: 0 !important;
+        overflow: visible;
+    }
+
+    .attendance-card .employee-info .summary-row:nth-child(2),
+    .attendance-card .employee-info .summary-row:nth-child(2) * {
+        font-size: 11px !important;
+    }
+}
 </style>
 </head>
 <body>
@@ -219,7 +252,8 @@ tr { break-inside: avoid; page-break-inside: avoid; }
         function renderMonthNavigation() {
             monthNav.innerHTML = "";
             Object.keys(monthFiles).forEach(month => monthNav.appendChild(createButton(month, `month-button ${month === currentMonth ? "active" : ""}`, () => switchMonth(month))));
-            monthNav.appendChild(createButton("各工地異常紀錄", "month-button", () => openAbnormalReport()));
+
+
         }
         function renderLocationNavigation(list) {
             locationNav.innerHTML = "";
@@ -276,6 +310,9 @@ tr { break-inside: avoid; page-break-inside: avoid; }
                 title.appendChild(createButton(
                     `異常紀錄（${abnormalCount}）`, "abnormal-record-button", () => openAbnormalReport(location)
                 ));
+                const leaveCount = grouped[location].reduce((sum, employee) => sum + (Array.isArray(employee.出勤) ? employee.出勤 : []).filter(isLeaveDay).length, 0);
+                title.appendChild(createButton(`休假清單（${leaveCount}）`, "abnormal-record-button", () => openLeaveReport(location)));
+                title.appendChild(createButton("員工照片", "abnormal-record-button", () => openWorkerPhotos(location)));
                 const grid = document.createElement("div"); grid.className = "employee-grid";
                 sortEmployees(grouped[location]).forEach(employee => {
                     const item = document.createElement("a"); item.href = "#"; item.className = "employee-item";
@@ -325,8 +362,7 @@ tr { break-inside: avoid; page-break-inside: avoid; }
             }, 0);
             employeeInfo.innerHTML = `
                 <div class="summary-row"><span>員工姓名：${escapeHtml(employee.員編)} ${escapeHtml(employee.姓名)} ${createAbnormalityDot(employee)}</span></div>
-                <div class="summary-row"><span>應休：${escapeHtml(employee.應休時數 ?? Number(employee.應休天數 ?? 0) * 8)} 小時</span><span>已休：${escapeHtml(employee.已休時數 ?? 0)} 小時</span><span>未休：${escapeHtml(employee.未休時數 ?? 0)} 小時</span></div>
-                <div class="summary-row"><span>上班工時：${escapeHtml(Number(totalWorkHours.toFixed(2)))} 小時</span><span>系統加班：${escapeHtml(employee.系統加班累計 ?? 0)} 小時</span>${Number(employee.遲到累計 ?? 0) > 0 ? `<span>遲到累計：${escapeHtml(employee.遲到累計)} 分鐘</span>` : ""}</div>`;
+                <div class="summary-row"><span>應休：${escapeHtml(employee.應休時數 ?? Number(employee.應休天數 ?? 0) * 8)} 小時</span><span>已休：${escapeHtml(employee.已休時數 ?? 0)} 小時</span><span>未休：${escapeHtml(employee.未休時數 ?? 0)} 小時</span><span>上班工時：${escapeHtml(Number(totalWorkHours.toFixed(2)))} 小時</span><span>系統加班：${escapeHtml(employee.系統加班累計 ?? 0)} 小時</span>${Number(employee.遲到累計 ?? 0) > 0 ? `<span>遲到累計：${escapeHtml(employee.遲到累計)} 分鐘</span>` : ""}</div>`;
             const wrapper = document.createElement("div"); wrapper.className = "attendance-wrapper";
             const table = document.createElement("table"); table.className = "attendance-table";
             table.innerHTML = `<colgroup><col class="col-date"><col class="col-gate"><col class="col-time"><col class="col-gate"><col class="col-time"><col class="col-hours"><col class="col-overtime"><col class="col-status"><col class="col-notes"></colgroup><thead><tr><th>日期</th><th>上班門</th><th>上班</th><th>下班門</th><th>下班</th><th>工時</th><th>7／18</th><th>狀態</th><th>備註</th></tr></thead><tbody></tbody>`;
@@ -407,9 +443,16 @@ tr { break-inside: avoid; page-break-inside: avoid; }
             renderEmployeeList(searchInput.value);
             requestAnimationFrame(() => window.scrollTo({ top: listScrollY, behavior: "auto" }));
         }
-        function openAbnormalReport(location = null) {
+        function isLeaveDay(day) {
+            return String(day.狀態 ?? "").trim() === "休";
+        }
+        function openAbnormalReport(location = null) { openSiteReport("abnormal", location); }
+        function openLeaveReport(location = null) { openSiteReport("leave", location); }
+        function openSiteReport(kind, location = null) {
+            const isLeave = kind === "leave";
+            const label = isLeave ? "休假清單" : "異常紀錄";
             if (currentView === "list") listScrollY = window.scrollY;
-            currentView = "abnormal";
+            currentView = kind;
             returnAction = returnToEmployeeList;
             employeeContainer.innerHTML = "";
             locationNav.style.display = "none";
@@ -417,16 +460,16 @@ tr { break-inside: avoid; page-break-inside: avoid; }
             const records = [];
             sortEmployees(employeeData).forEach(employee => {
                 if (location !== null && getLocation(employee) !== location) return;
-                (Array.isArray(employee.出勤) ? employee.出勤 : []).filter(isAbnormalDay).forEach(day => records.push({ employee, day }));
+                (Array.isArray(employee.出勤) ? employee.出勤 : []).filter(isLeave ? isLeaveDay : isAbnormalDay).forEach(day => records.push({ employee, day }));
             });
             records.sort((a, b) => getLocation(a.employee).localeCompare(getLocation(b.employee), "zh-Hant") || String(a.day.日期).localeCompare(String(b.day.日期)) || String(a.employee.員編).localeCompare(String(b.employee.員編), "zh-Hant", { numeric: true }));
-            resultInfo.textContent = `${currentMonth}｜${location ?? "各工地"}異常紀錄：共 ${records.length} 筆（不含休）`;
+            resultInfo.textContent = `${currentMonth}｜${location ?? "各工地"}${label}：共 ${records.length} 筆${isLeave ? "（僅列狀態為休）" : "（不含休）"}`;
             const toolbar = document.createElement("div");
             toolbar.className = "report-toolbar";
-            toolbar.append(createButton("返回員工列表", "top-back-button", returnToEmployeeList), createButton("列印異常紀錄", "print-button", () => window.print()));
+            toolbar.append(createButton("返回員工列表", "top-back-button", returnToEmployeeList), createButton(`列印${label}`, "print-button", () => window.print()));
             employeeContainer.appendChild(toolbar);
             if (!records.length) {
-                const empty = document.createElement("p"); empty.textContent = "本月沒有符合條件的異常紀錄。";
+                const empty = document.createElement("p"); empty.textContent = `本月沒有符合條件的${label}。`;
                 employeeContainer.appendChild(empty);
             }
             const grouped = new Map();
@@ -437,14 +480,18 @@ tr { break-inside: avoid; page-break-inside: avoid; }
             });
             grouped.forEach((items, site) => {
                 const section = document.createElement("section"); section.className = "abnormal-report";
-                const title = document.createElement("h2"); title.textContent = `${currentMonth}｜${site}｜異常紀錄 ${items.length} 筆`;
-                const note = document.createElement("p"); note.textContent = "僅列系統異常；出勤資料僅供參考，以公司核定為主。工地依員工所屬門別分組。";
+                const title = document.createElement("h2"); title.textContent = `${currentMonth}｜${site}｜${label} ${items.length} 筆`;
+                const note = document.createElement("p"); note.textContent = `${isLeave ? "僅列系統標示「休」的紀錄，並非請假名冊；1～3日休假為員工自理" : "僅列系統異常"}；臉部辨識資料僅供事後判讀，出勤資料以公司核定為主。工地依員工所屬門別分組。`;
                 const wrapper = document.createElement("div"); wrapper.className = "attendance-wrapper";
                 const table = document.createElement("table"); table.className = "abnormal-table";
-                table.innerHTML = '<colgroup><col style="width:8%"><col style="width:12%"><col style="width:13%"><col style="width:12%"><col style="width:11%"><col style="width:11%"><col style="width:7%"><col style="width:12%"><col style="width:14%"></colgroup><thead><tr><th>工號</th><th>姓名</th><th>門別／工地</th><th>日期</th><th>上班</th><th>下班</th><th>筆數</th><th>異常狀態</th><th>備註</th></tr></thead><tbody></tbody>';
+                table.innerHTML = '<colgroup><col style="width:8%"><col style="width:11%"><col style="width:12%"><col style="width:11%"><col style="width:11%"><col style="width:11%"><col style="width:6%"><col style="width:16%"><col style="width:14%"></colgroup><thead><tr><th>工號</th><th>姓名</th><th>門別／工地</th><th>日期</th><th>上班</th><th>下班</th><th>筆數</th><th>異常狀態</th><th>備註</th></tr></thead><tbody></tbody>';
+                if (isLeave) {
+                    table.tHead.rows[0].cells[6].textContent = "計休時數";
+                    table.tHead.rows[0].cells[7].textContent = "狀態";
+                }
                 items.forEach(({ employee, day }) => {
                     const row = document.createElement("tr");
-                    const values = [employee.員編, employee.姓名, site, formatDateWithWeekday(day.日期), day.最早時間, day.最晚時間, day.打卡筆數, day.狀態, ""];
+                    const values = [employee.員編, employee.姓名, site, formatDateWithWeekday(day.日期), day.最早時間, day.最晚時間, isLeave ? (day.計休時數 ?? "") : day.打卡筆數, day.狀態, ""];
                     values.forEach(value => { const td = document.createElement("td"); td.textContent = value ?? ""; row.appendChild(td); });
                     table.tBodies[0].appendChild(row);
                 });
@@ -458,6 +505,77 @@ tr { break-inside: avoid; page-break-inside: avoid; }
             if (target instanceof Element && (target.closest("input, textarea, select, [role='textbox']") || target.isContentEditable)) return;
             if (typeof returnAction === "function") { event.preventDefault(); returnAction(); }
         });
+
+
+        let workerDataPromise = null;
+        function loadWorkerPhotoData() {
+            if (typeof WORKER_DATA !== "undefined" && Array.isArray(WORKER_DATA)) return Promise.resolve(WORKER_DATA);
+            if (workerDataPromise) return workerDataPromise;
+            workerDataPromise = new Promise((resolve, reject) => {
+                const script = document.createElement("script");
+                script.src = new URL("data.js", document.baseURI).href;
+                script.onload = () => {
+                    if (typeof WORKER_DATA !== "undefined" && Array.isArray(WORKER_DATA)) resolve(WORKER_DATA);
+                    else { workerDataPromise = null; reject(new Error("data.js 必須定義陣列 const WORKER_DATA = [...]")); }
+                };
+                script.onerror = () => { workerDataPromise = null; script.remove(); reject(new Error("無法載入 data.js，請確認與 hours.html 放在同一資料夾。")); };
+                document.head.appendChild(script);
+            });
+            return workerDataPromise;
+        }
+        function getSiteWorkers(location) {
+            const seen = new Set();
+            return sortEmployees(employeeData).filter(employee => {
+                const id = String(employee.員編 ?? "").trim();
+                if (getLocation(employee) !== location || !id.startsWith("3") || seen.has(id)) return false;
+                seen.add(id); return true;
+            });
+        }
+        async function openWorkerPhotos(location) {
+            const month = currentMonth;
+            const workers = getSiteWorkers(location);
+            const popup = window.open("", "_blank", "width=1050,height=800,scrollbars=yes,resizable=yes");
+            if (!popup) { window.alert("新視窗被瀏覽器阻擋，請允許此網站開啟彈出式視窗。"); return; }
+            const doc = popup.document;
+            doc.open();
+            doc.write('<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><title>員工照片</title><style>body{margin:0;padding:24px;background:#F0EDE7;color:#38352F;font-family:Arial,"Microsoft JhengHei",sans-serif}h1{font-size:23px}p{line-height:1.6}.toolbar{display:flex;gap:10px}button{padding:6px 12px;cursor:pointer}.photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px;margin-top:18px}.worker{padding:12px;background:#FAF7EF;border:1px solid #c4b8a5;border-radius:8px;text-align:center;break-inside:avoid}.photo{height:180px;display:flex;align-items:center;justify-content:center;background:#e5e1d8;color:#686258}.photo img{width:100%;height:100%;object-fit:contain}.name{margin-top:10px;overflow-wrap:anywhere;line-height:1.5}@media print{body{background:#fff;padding:0}.toolbar{display:none}.photos{grid-template-columns:repeat(4,1fr)}.worker{box-shadow:none}}</style></head><body><h1></h1><p id="notice"></p><div class="toolbar"></div><p id="message">照片資料載入中…</p><div class="photos"></div></body></html>');
+            doc.close();
+            popup.opener = null;
+            doc.querySelector("h1").textContent = `${month}｜${location}｜員工照片（${workers.length} 人）`;
+            doc.getElementById("notice").textContent = "僅列本月份該門別員編3開頭的員工。照片供人工辨識；臉部辨識資料僅供事後判讀，不作為請假核准紀錄。1～3日休假為員工自理。";
+            const toolbar = doc.querySelector(".toolbar");
+            for (const [label, action] of [["列印照片", () => popup.print()], ["關閉視窗", () => popup.close()]]) {
+                const button = doc.createElement("button"); button.type = "button"; button.textContent = label; button.onclick = action; toolbar.appendChild(button);
+            }
+            if (!workers.length) { doc.getElementById("message").textContent = "本月份此門別沒有員編3開頭的員工。"; return; }
+            try {
+                const records = await loadWorkerPhotoData();
+                if (popup.closed) return;
+                const byId = new Map(records.map(worker => [String(worker.id ?? "").trim(), worker]));
+                let missing = 0;
+                for (const employee of workers) {
+                    const id = String(employee.員編).trim();
+                    const record = byId.get(id);
+                    const card = doc.createElement("section"); card.className = "worker";
+                    const photo = doc.createElement("div"); photo.className = "photo";
+                    const raw = record?.photoUrl || (record?.photoId ? `https://lh3.googleusercontent.com/d/${encodeURIComponent(record.photoId)}` : "");
+                    let url = "";
+                    try { const parsed = new URL(raw); if (parsed.protocol === "https:" || parsed.protocol === "http:") url = parsed.href; } catch (_) {}
+                    if (url) {
+                        const image = doc.createElement("img"); image.alt = `${id} ${employee.姓名 ?? record?.name ?? ""}`;
+                        image.referrerPolicy = "no-referrer";
+                        image.onerror = () => { photo.replaceChildren(); photo.textContent = "照片無法載入"; };
+                        image.src = url; photo.appendChild(image);
+                    } else { missing++; photo.textContent = "暫無照片"; }
+                    const name = doc.createElement("div"); name.className = "name";
+                    name.textContent = `${id} ${employee.姓名 || record?.name || ""}`;
+                    card.append(photo, name); doc.querySelector(".photos").appendChild(card);
+                }
+                doc.getElementById("message").textContent = `共 ${workers.length} 位員工${missing ? `，其中 ${missing} 位未設定照片` : ""}。列印前請等候照片載入完成。`;
+            } catch (error) {
+                if (!popup.closed) doc.getElementById("message").textContent = error.message;
+            }
+        }
 
         loadData();
     </script>
