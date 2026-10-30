@@ -1,0 +1,14 @@
+py -m pip install playwright
+py -m playwright install chromium
+
+py batch_att_pdf.py
+py batch_att_pdf.py --limit 0
+
+py -m http.server 8000
+
+http://localhost:8000/hours.html
+
+預設值
+parser.add_argument('--limit', type=int, default=5, help='先測試5位；0表示全部')
+日期
+python batch_att_pdf.py --end-day 20 --limit 0

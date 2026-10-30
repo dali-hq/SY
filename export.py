@@ -13,7 +13,7 @@ folder = Path(__file__).parent
 REPORT_YEAR = 2026
 REPORT_MONTH = 10
 
-input_filename = "出入歷史紀錄報表10月.xls"
+input_filename = "出入歷史紀錄報表.xls"
 output_filename = "員工出勤資料_10月.json"
 
 input_file = folder / input_filename
