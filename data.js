@@ -624,6 +624,12 @@ const WORKER_DATA = [
     "photoUrl": "https://lh3.googleusercontent.com/d/1SRkwWQpw5oel8NUUP-_zqUO014XNZ1HF"
   },
   {
+    "id": "35043",
+    "name": "梁文貴",
+    "photoId": "1SaZYKcKFaaP28ic9uJLlY_5_xf2kNdQ1",
+    "photoUrl": "https://lh3.googleusercontent.com/d/1SaZYKcKFaaP28ic9uJLlY_5_xf2kNdQ1"
+  },
+  {
     "id": "36004",
     "name": "費克俊",
     "photoId": "17Y4bVWc_Vs0GoiT1vHpp61YbwSJty8iN",
